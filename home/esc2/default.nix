@@ -1,0 +1,51 @@
+# https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/home-manager/home.nix
+{ config
+, lib
+, osConfig
+, ...
+}:
+let
+  host = osConfig.networking.hostName;
+in
+{
+  imports = [
+    ../shared
+    ../shared/features/audio
+    ../shared/features/cli
+    ../shared/features/desktop
+    #../shared/features/develop
+    ../shared/features/virtualisation
+    ./programs
+    # import host-specific configuration
+    (./. + "/${host}")
+  ];
+
+  home.username = "esc2";
+  home.homeDirectory = "/home/esc2";
+
+  home.file.".face".source = ../../assets/100897044_p0.png;
+  # home.file.".face".source = pkgs.fetchurl {
+  # https://www.pixiv.net/artworks/100897044
+  # url = "https://i.pximg.net/img-original/img/2022/08/31/19/32/36/100897044_p0.png";
+  # hash = "sha256-xO7ISZ/tT7HC8tV3apSVRTJxEpp5Ai6m5JzPPZvuCIo=";
+  # curlOptsList = [
+  #   "-e"
+  #   "https://www.pixiv.net/"
+  # ];
+  # };
+
+  home.persistence."/persist${config.home.homeDirectory}" = {
+   # https://github.com/nix-community/impermanence#home-manager
+    directories = [
+      "Downloads"
+      "Music"
+      "Pictures"
+      "Documents"
+      "Videos"
+      ".os" # github:lcensies/os
+      "notes"
+      "repos"
+    ];
+    allowOther = lib.mkForce true;
+  };
+}

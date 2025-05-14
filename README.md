@@ -20,6 +20,7 @@ nix run github:nix-community/plasma-manager
 
 ## Optional
 
+- [ ] Hardware 2FA key (like yubico) + gpg
 - [ ] Firefox extensions
 - [ ] Chrome
 
