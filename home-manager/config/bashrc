@@ -1,0 +1,24 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+
+export PS1="\[$(tput bold)\]\[\033[38;5;231m\][\[$(tput sgr0)\]\[\033[38;5;117m\]\u\[$(tput sgr0)\]\[\033[38;5;231m\]@\[$(tput sgr0)\]\[\033[38;5;117m\]\h\[$(tput sgr0)\] \[$(tput sgr0)\]\[\033[38;5;39m\]\w\[$(tput sgr0)\]\[$(tput bold)\]\[\033[38;5;231m\]]\[$(tput sgr0)\] \[$(tput sgr0)\]\[\033[38;5;229m\]\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/')\[$(tput sgr0)\]"
+
+set -o vi
+
+#Global path
+export PATH=$PATH:~/.local/bin/
+export PATH=$PATH:~/repos/nixos/home-manager/config/bash-scripts
+
+#Aliases
+alias ls="ls --color -la"
+alias vim="nvim"
+alias kpcli="kpcli --kdb=/home/esc2/nixos-config/home-manager/config/bash-scripts/passwords.kbx"
+
+
+eval $(ssh-agent -s ) > /dev/null
+ssh-add ~/.ssh/* 2> /dev/null
