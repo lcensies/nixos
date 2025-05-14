@@ -19,6 +19,4 @@ alias ls="ls --color -la"
 alias vim="nvim"
 alias kpcli="kpcli --kdb=/home/esc2/nixos-config/home-manager/config/bash-scripts/passwords.kbx"
 
-
-eval $(ssh-agent -s ) > /dev/null
-ssh-add ~/.ssh/* 2> /dev/null
+eval "$(direnv hook bash)"

@@ -15,6 +15,7 @@
         git 
         rcm
         python3
+	just
 	# vscodium
 
 	#Browser
@@ -59,6 +60,13 @@
 	# Note taking
 	obsidian
         ];
+
+    programs.direnv = {
+      enable = true;
+      enableBashIntegration = true; # see note on other shells below
+      nix-direnv.enable = true;
+    };
+
 
   home.username = "esc2";
   home.homeDirectory = "/home/esc2";
