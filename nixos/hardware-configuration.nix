@@ -8,23 +8,27 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "thunderbolt" "usb_storage" "sd_mod" "sdhci_pci" ];
-  boot.blacklistedKernelModules = ["ideapad_laptop"];
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "thunderbolt" "usbhid" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  #boot.initrd.kernelModules = [ "amdgpu" ];
-  # services.xserver.videoDrivers = [ "amdgpu" ];
-
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/217334a8-7af9-4924-afb5-b0aa15cf06fd";
+    { device = "/dev/disk/by-uuid/ee421ca4-9843-42d8-912b-d856699ee1a5";
       fsType = "ext4";
     };
 
-  boot.initrd.luks.devices."root".device = "/dev/disk/by-uuid/ef57b361-4164-415a-b727-33d03a899b9a";
+  boot.initrd.luks.devices."luks-11a6dfb6-42d0-4275-8d50-7eb1ddafbd8e".device = "/dev/disk/by-uuid/11a6dfb6-42d0-4275-8d50-7eb1ddafbd8e";
 
-  swapDevices = [ ];
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/0039-B517";
+      fsType = "vfat";
+      options = [ "fmask=0077" "dmask=0077" ];
+    };
+
+  swapDevices =
+    [ { device = "/dev/disk/by-uuid/aeb6f3ed-6076-4a35-a97d-61acd1e91dd9"; }
+    ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -32,6 +36,7 @@
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp2s0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.eth0.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp4s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
