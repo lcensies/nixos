@@ -1,12 +1,14 @@
 {
-	description = "Home manager config"
+	description = "Home manager config";
 	inputs = {
-		nixpkgs.url = "nixpkgs/nixos-24.05"
+		nixpkgs.url = "nixpkgs/nixos-24.05";
 		home-manager = {
 		      url = "github:nix-community/home-manager/release-24.05";
 		      inputs.nixpkgs.follows = "nixpkgs";
 	    	};
 	};
+
+
 
 	outputs = { nixpkgs, home-manager, ... }:
 		let 
@@ -19,7 +21,7 @@
 					inherit pkgs;
 					modules = [ ./home.nix ];
 				};
-			}
+			};
 		};
 				
 }

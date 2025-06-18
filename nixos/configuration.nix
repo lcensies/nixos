@@ -9,9 +9,12 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./virtualization/virt.nix
+      ./virtualization/distrobox.nix
+      ./networking/proxy.nix
     ];
 
   # Bootloader.
+  #boot.kernelPackages = pkgs.linuxKernel.packages.linux_5_15;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -64,6 +67,7 @@
   # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
+  security.sudo.wheelNeedsPassword = false;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -90,6 +94,8 @@
     #  thunderbird
     ];
   };
+  programs.kdeconnect.enable = true;
+  programs.xwayland.enable = true;
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -100,10 +106,31 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+     home-manager
      vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
      wget
-     git  
+     git
+     gnumake
+     borgbackup
+
+     openvpn
+
+    ansible
+
+			#CLI programs
+			git
+			kpcli #password manager
+			acpi #battery status
+      ripgrep
+
+      xorg.libX11
+
+    tor-browser
 ];
+
+services.openvpn.servers = {
+  mchausov-work = { config = '' config /etc/openvpn/client/m.chausov-work.conf''; };
+};
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -116,7 +143,7 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -131,5 +158,5 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
-
+  #nix.settings.experimental-features = [ "nix-command" "flakes" ];
 }

@@ -6,6 +6,7 @@
 {
   imports =
     [ (modulesPath + "/installer/scan/not-detected.nix")
+       <nixos-hardware>
     ];
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "thunderbolt" "usbhid" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
@@ -41,4 +42,11 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  # install linux-firmware
+  hardware.firmware = with pkgs; [ linux-firmware ];
+
+  #hardware.graphics.enable = true;
+  # https://nixos.wiki/wiki/AMD_GPU#Vulkan
+  #hardware.graphics.enable32Bit = true;
+
 }

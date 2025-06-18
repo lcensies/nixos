@@ -3,14 +3,17 @@
   environment.systemPackages = with pkgs; [
     virt-manager
     virt-viewer
-    spice 
+    virtiofsd
+    spice
     spice-gtk
-    # qemu_kvm
+    qemu_kvm
     spice-protocol
     win-virtio
     win-spice
-    
+
     vagrant
+
+    wine
   ];
 
   virtualisation = {
@@ -29,7 +32,7 @@
     extraGroups = [
       "qemu-libvirtd"
       "libvirtd"
-      
+
       "video"
       "audio"
       "disk"
