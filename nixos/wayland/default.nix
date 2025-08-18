@@ -1,5 +1,9 @@
 { config, pkgs, ...}:
 {
+  imports = [
+    ./login-manager.nix
+    ./window-manager.nix
+  ];
   environment.extraInit = ''
       #Turn off gui for ssh auth
       unset -v SSH_ASKPASS

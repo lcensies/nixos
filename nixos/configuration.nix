@@ -13,74 +13,28 @@ in
   imports =
     [
 	#silent boot
-	./silent-boot/boot.nix      
+	./silent-boot
  
 	#hardware optimization
-	./hardware-optimization/hardware-configuration.nix
 
 	#audio
 	./audio/general.nix
 	./audio/bluetooth.nix
         
 	#networking
-	./networking/networks.nix
+	./networking
 	
 	#wayland - sway
-	./wayland/general.nix
-	./wayland/window-manager.nix
-	./wayland/login-manager.nix
+	./wayland
+	
+	./common
 
        # TODO: add wayland-kde
 
        # virtualization
        ./virtualization/virt.nix
-    ];
+    ]
+    ++ lib.optional (config.machineType == "thinkbook-14") ./hardware-optimization/hardware-configuration-thinkbook-14.nix
+    ++ lib.optional (config.machineType == "vmware-vm") ./hardware-optimization/hardware-configuration-vmware-vm.nix
 
-  nixpkgs.config = {
-      allowUnfree = true;
-      packageOverrides = pkgs: {
-        unstable = import unstableTarball {
-          config = config.nixpkgs.config;
-        };
-      };
-  };
-
-  time.timeZone = "Europe/Moscow";
-
-  environment.sessionVariables = rec {
-    XDG_CONFIG_HOME = "\${HOME}/.config";
-    XCURSOR_SIZE = "24";
-  };
-    
-  users.users.esc2 = {
-     isNormalUser = true;
-     extraGroups = [ "wheel" ]; 
-   };
-  
-  environment.systemPackages = with pkgs; [
-    bc
-    vim
-    wget
-    tmux
-    freshfetch
-   ];
-
-  
-
-  #programs.mtr.enable = true;
-  #programs.gnupg.agent = {
-  #  enable = true;
-  #  enableSSHSupport = true;
-  #};
-
-  #services.openssh.enable = true;
-  #services.printing.enable = true;    
-
-  # Doesn't work well with sway on current
-  # hardware
-  # services.logind.extraConfig = ''
-  #   IdleAction=suspend
-  # '';
-  # IdleActionSec
-  system.stateVersion = "22.11";
 }
