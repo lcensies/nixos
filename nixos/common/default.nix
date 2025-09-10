@@ -23,7 +23,7 @@ in
 
   environment.sessionVariables = rec {
     XDG_CONFIG_HOME = "\${HOME}/.config";
-    XCURSOR_SIZE = "24";
+    XCURSOR_SIZE = "64";
   };
     
   users.users.esc2 = {
@@ -41,6 +41,7 @@ in
     nodejs_24
     rcm
     gnumake
+    go
    ];
 
   

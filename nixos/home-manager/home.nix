@@ -5,7 +5,7 @@
 	# ./config/theme.nix
 	./config/bashrc.nix
 	# ./config/alacritty.nix
-	./config/neovim.nix
+	#./config/neovim.nix
         ./config/waybar.nix
         # ./config/yt-dlp.nix
   ];
@@ -15,7 +15,7 @@
         git 
         rcm
         python3
-	just
+				just
 	# vscodium
 
 	#Browser
