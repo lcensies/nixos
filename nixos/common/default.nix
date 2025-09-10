@@ -38,6 +38,7 @@ in
     tmux
     freshfetch
     git
+    nodejs_24
    ];
 
   
