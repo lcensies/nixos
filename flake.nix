@@ -41,8 +41,7 @@
       #packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
       overlays = import ./overlays { inherit inputs; };
-      nixosModules = import ./modules/nixos;
-      homeManagerModules = import ./modules/home-manager;
+      # nixosModules = import ./modules/nixos;
 
       nixosConfigurations =
         let
@@ -55,23 +54,38 @@
           vmw = nixpkgs.lib.nixosSystem {
             inherit specialArgs;
             system = "x86_64-linux";
-            modules = [ ./hosts/vmw ];
+            modules = [ 
+              ./hosts/vmw 
+            ];
           };
 
           # ./hosts/thinkbook14/README.md
           thinkbook14 = nixpkgs.lib.nixosSystem {
             inherit specialArgs;
             system = "x86_64-linux";
-            modules = [ ./hosts/thinkbook14 ];
+            modules = [ 
+              ./hosts/thinkbook14 
+              ./nixos/home-manager
+            ];
           };
 
           # Rollback to original configuration
           rollback = nixpkgs.lib.nixosSystem {
             inherit specialArgs;
             system = "x86_64-linux";
-            modules = [ ./hosts/rollback ];
+            modules = [ 
+              ./hosts/rollback 
+            ];
           };
 
         };
+
+      homeConfigurations = {
+        "esc2" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          extraSpecialArgs = { inherit inputs outputs; };
+          modules = [ ./nixos/home-manager/home.nix ];
+        };
+      };
     };
 }

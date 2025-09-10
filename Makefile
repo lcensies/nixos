@@ -15,3 +15,13 @@ disko-tb14:
 rollback:
 	sudo nixos-rebuild switch --flake '.#rollback'
 
+configure:
+	cd dotfiles && git submodule update --init --recursive
+	rcup -v
+
+home-manager:
+	home-manager switch --flake '.#esc2'
+
+home-manager-edit:
+	home-manager edit --flake '.#esc2'
+

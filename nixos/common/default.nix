@@ -39,6 +39,7 @@ in
     freshfetch
     git
     nodejs_24
+    rcm
    ];
 
   
