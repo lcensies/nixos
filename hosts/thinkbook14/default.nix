@@ -4,6 +4,8 @@
 		../../nixos/default-vm.nix
 		inputs.disko.nixosModules.disko
 		./hardware-configuration-thinkbook14.nix
+		../../nixos/wayland/window-manager.nix
+		../../nixos/wayland/login-manager.nix
 		#./disko.nix
 	];
 	
