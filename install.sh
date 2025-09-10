@@ -14,18 +14,9 @@ symlink() {
   ln -sv "${SCRIPT_DIR}/home-manager/" ~/.config/home-manager
 }
 
-install_home_mgr() {
-  command -v home-manager >/dev/null && return
-  nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-  nix-channel --update
-  echo "You may need to install home-manager via nix-shell now"
-}
-
 symlink_dotfiles() {
-  [ -d ~/.dotfiles ] && return
-  ln -sv "${SCRIPT_DIR}/dotfiles" ~/.dotfiles
+  [ -d ~/.dotfiles ] || ln -sv "${SCRIPT_DIR}/dotfiles" ~/.dotfiles
 }
 
-symlink
+# symlink
 symlink_dotfiles
-install_home_mgr

@@ -40,6 +40,7 @@ in
     git
     nodejs_24
     rcm
+    gnumake
    ];
 
   

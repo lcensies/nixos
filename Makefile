@@ -16,7 +16,8 @@ rollback:
 	sudo nixos-rebuild switch --flake '.#rollback'
 
 configure:
-	cd dotfiles && git submodule update --init --recursive
+	git submodule update --init --recursive
+	[ -d ~/.dotfiles ] || ln -sv "$(shell pwd)/dotfiles" ${HOME}/.dotfiles
 	rcup -v
 
 home-manager:

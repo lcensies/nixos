@@ -55,7 +55,9 @@
 
 	#Font
 	jetbrains-mono
-        nerdfonts
+        nerd-fonts.jetbrains-mono
+        nerd-fonts.fira-code
+        nerd-fonts.hack
         
 	# Note taking
 	obsidian
@@ -70,9 +72,12 @@
 
   home.username = "esc2";
   home.homeDirectory = "/home/esc2";
-  home.stateVersion = "22.11";
+  home.stateVersion = "24.05";
 
 
   programs.home-manager.enable = true;
+
+  # Disable input methods to avoid fcitx5 issues
+  i18n.inputMethod.enabled = null;
 
 }

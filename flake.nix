@@ -65,7 +65,7 @@
             system = "x86_64-linux";
             modules = [ 
               ./hosts/thinkbook14 
-              ./nixos/home-manager
+              ./nixos/home-manager  # Fixed fcitx5 issue with package override
             ];
           };
 
