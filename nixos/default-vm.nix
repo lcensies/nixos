@@ -4,7 +4,7 @@
 		./common
 		./networking
 		./virtualization
-		./silent-boot
+		#./silent-boot
 	];
 }
 

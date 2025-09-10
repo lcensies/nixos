@@ -8,17 +8,14 @@ in
 
 {
 
-  imports =
-    [
-    ]
 
 
   nixpkgs.config = {
       allowUnfree = true;
       packageOverrides = pkgs: {
-        unstable = import unstableTarball {
-          config = config.nixpkgs.config;
-        };
+        #unstable = import unstableTarball {
+        #  config = config.nixpkgs.config;
+        #};
       };
   };
 

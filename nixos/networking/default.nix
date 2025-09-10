@@ -22,7 +22,7 @@
 
   environment.systemPackages = with pkgs; [
     # WIFI tui
-    unstable.impala
+    impala
 
     openconnect
     nekoray
