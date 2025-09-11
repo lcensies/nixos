@@ -29,11 +29,14 @@ in
   users.users.esc2 = {
      isNormalUser = true;
      extraGroups = [ "wheel" ]; 
+     shell = pkgs.zsh;
+     ignoreShellProgramCheck = true;
    };
   
   environment.systemPackages = with pkgs; [
     bc
     vim
+    neovim
     wget
     tmux
     freshfetch
@@ -42,6 +45,8 @@ in
     rcm
     gnumake
     go
+    zsh
+    starship
    ];
 
   
