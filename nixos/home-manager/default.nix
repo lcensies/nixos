@@ -12,5 +12,5 @@
     });
   };
   
-  home-manager.users.esc2 = import ./home.nix;
+  home-manager.users.esc2 = { config, pkgs, ... }: import ./home.nix { inherit config pkgs inputs; };
 }

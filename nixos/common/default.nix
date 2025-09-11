@@ -47,6 +47,8 @@ in
     go
     zsh
     starship
+    kitty
+    zoxide
    ];
 
   

@@ -1,12 +1,13 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 {
   imports = [
 	# ./config/git.nix
-	# ./config/theme.nix
+  ./config/theme.nix
 	./config/bashrc.nix
 	# ./config/alacritty.nix
 	#./config/neovim.nix
         ./config/waybar.nix
+        # ./config/firefox.nix
         # ./config/yt-dlp.nix
   ];
   nixpkgs.config.allowUnfree = true;
