@@ -18,6 +18,7 @@
         python3
 				just
 	# vscodium
+	code-cursor # AI-powered code editor built on vscode
 
 	#Browser
 	firefox

@@ -25,6 +25,11 @@ in
     XDG_CONFIG_HOME = "\${HOME}/.config";
     XCURSOR_SIZE = "64";
   };
+
+  # FZF configuration
+  environment.variables = {
+    FZF_DEFAULT_OPTS = "--height 40% --reverse --border";
+  };
     
   users.users.esc2 = {
      isNormalUser = true;
@@ -49,6 +54,17 @@ in
     starship
     kitty
     zoxide
+    jq  
+    fzf
+    zsh-fzf-tab
+    yq
+    lazygit
+    just
+    tmuxinator
+    nekoray
+    zoxide
+    atuin
+    rofi-power-menu
    ];
 
   
@@ -61,6 +77,15 @@ in
 
   services.openssh.enable = true;
   #services.printing.enable = true;    
+
+  # Shell configuration
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+    # Enable atuin zsh integration
+  };
 
   # Doesn't work well with sway on current
   # hardware

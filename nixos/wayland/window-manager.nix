@@ -49,6 +49,7 @@ in
     capitaine-cursors
 
     rofi-wayland 
+    kanshi
   ];
 
   services.dbus.enable = true;
@@ -74,6 +75,19 @@ in
       auth include login
       auth include system-auth
     '';
+  };
+
+    # kanshi systemd service
+  systemd.user.services.kanshi = {
+    description = "kanshi daemon";
+    environment = {
+      WAYLAND_DISPLAY="wayland-1";
+      DISPLAY = ":0";
+    }; 
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = ''${pkgs.kanshi}/bin/kanshi -c /home/esc2/.config/kanshi/config'';
+    };
   };
 
 }
