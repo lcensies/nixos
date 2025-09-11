@@ -29,4 +29,9 @@
   users.users.esc2 = {
     extraGroups = [ "podman" ];
   };
+
+  # Environment variables for Docker Compose to work with Podman
+  environment.sessionVariables = {
+    DOCKER_HOST = "unix:///run/podman/podman.sock";
+  };
 }

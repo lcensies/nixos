@@ -1,5 +1,8 @@
 {config, pkgs, ...}:
 {
+  imports = [
+    ./containers.nix
+  ];
   environment.systemPackages = with pkgs; [
     virt-manager
     virt-viewer
