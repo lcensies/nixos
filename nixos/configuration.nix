@@ -33,6 +33,7 @@ in
 
        # virtualization
        ./virtualization/virt.nix
+       ./virtualization/containers.nix
     ]
     ++ lib.optional (config.machineType == "thinkbook-14") ./hardware-optimization/hardware-configuration-thinkbook-14.nix
     ++ lib.optional (config.machineType == "vmware-vm") ./hardware-optimization/hardware-configuration-vmware-vm.nix
