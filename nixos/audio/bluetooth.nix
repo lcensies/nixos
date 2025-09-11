@@ -2,6 +2,12 @@
 {
 
   hardware.bluetooth.enable = true;
+  
+  # Enable BlueZ service for bluetuith
+  services.blueman.enable = true;
+  
+  # Ensure bluetoothd service is running
+  services.udev.packages = with pkgs; [ bluez ];
 
   environment.systemPackages = with pkgs; [
     bluetuith

@@ -33,7 +33,7 @@ in
     
   users.users.esc2 = {
      isNormalUser = true;
-     extraGroups = [ "wheel" ]; 
+     extraGroups = [ "wheel" "bluetooth" "audio" ]; 
      shell = pkgs.zsh;
      ignoreShellProgramCheck = true;
    };
@@ -65,6 +65,8 @@ in
     zoxide
     atuin
     rofi-power-menu
+    impala
+    bluetuith
    ];
 
   
