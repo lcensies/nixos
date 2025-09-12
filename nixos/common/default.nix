@@ -26,6 +26,17 @@ in
     XCURSOR_SIZE = "64";
   };
 
+  # Font rendering tweaks to reduce font glitches/blur
+  fonts.fontconfig.localConf = ''
+    <match target="pattern">
+      <edit name="antialias" mode="assign"><bool>true</bool></edit>
+      <edit name="hinting" mode="assign"><bool>true</bool></edit>
+      <edit name="hintstyle" mode="assign"><const>hintslight</const></edit>
+      <edit name="rgba" mode="assign"><const>rgb</const></edit>
+      <edit name="lcdfilter" mode="assign"><const>lcddefault</const></edit>
+    </match>
+  '';
+
   # FZF configuration
   environment.variables = {
     FZF_DEFAULT_OPTS = "--height 40% --reverse --border";
