@@ -1,5 +1,6 @@
 {config, pkgs, ...}:
 {
+  boot.kernelModules = [ "tun" ];
   networking.hostName = "stable";
 
 
@@ -30,6 +31,36 @@
   ];
 
   services.v2raya.enable = true;
+
+  # sing-box with TUN inbound; read external JSON config, not tracked in git
+  services.sing-box = {
+    enable = true;
+    settings = {};
+  };
+
+  # Allow deprecated special outbounds (dns) until we migrate rules fully
+  systemd.services."sing-box".environment = {
+    ENABLE_DEPRECATED_SPECIAL_OUTBOUNDS = "true";
+  };
+
+  # Force sing-box to load config from /etc/sing-box/config.json instead of Nix settings
+  systemd.services."sing-box".serviceConfig.ExecStart = pkgs.lib.mkForce [
+    ""
+    "${pkgs.sing-box}/bin/sing-box run -c /etc/sing-box/config.json"
+  ];
+
+  # Allow traffic via TUN interface
+  networking.firewall.trustedInterfaces = [ "tun0" ];
+
+  # Route system traffic via local proxy defaults
+  environment.variables = {
+    http_proxy = "http://127.0.0.1:7890";
+    https_proxy = "http://127.0.0.1:7890";
+    HTTP_PROXY = "http://127.0.0.1:7890";
+    HTTPS_PROXY = "http://127.0.0.1:7890";
+    no_proxy = "127.0.0.1,localhost,.local,.lan";
+    NO_PROXY = "127.0.0.1,localhost,.local,.lan";
+  };
 
 
   security.sudo.extraRules = [{
