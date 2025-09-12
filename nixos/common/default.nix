@@ -50,12 +50,14 @@ in
     rcm
     gnumake
     go
+    ruby
     zsh
     starship
     kitty
     zoxide
     jq  
     fzf
+    ripgrep
     zsh-fzf-tab
     yq
     lazygit
@@ -69,8 +71,8 @@ in
     bluetuith
    ];
 
-  
-
+  services.resolved.enable = true; 
+  programs.nekoray.tunMode.enable= true;
   #programs.mtr.enable = true;
   #programs.gnupg.agent = {
   #  enable = true;
