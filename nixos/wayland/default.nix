@@ -17,4 +17,8 @@
   };
   users.users.esc2.extraGroups = [ "video" ];
   programs.light.enable = true;
+
+  environment.systemPackages = with pkgs; [
+    wlroots
+  ];
 }
