@@ -49,6 +49,18 @@
     };
   };
 
+  # Systemd service to ensure language switching works after login
+  systemd.user.services.language-setup = {
+    description = "Setup language switching for GNOME";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "/run/current-system/sw/bin/bash -c 'sleep 5 && gsettings set org.gnome.desktop.input-sources sources \"[(''xkb'', ''us''), (''xkb'', ''ru'')]\" && gsettings set org.gnome.desktop.input-sources mru-sources \"[(''xkb'', ''us''), (''xkb'', ''ru'')]\" && gsettings set org.gnome.desktop.input-sources xkb-options \"[''grp:alt_shift_toggle'']\"'";
+      RemainAfterExit = true;
+    };
+  };
+
   # Home-manager GNOME configuration
   home-manager.users.esc2 = { pkgs, ... }: {
     # Enable GNOME Shell and requested extensions for the user
@@ -74,8 +86,8 @@
         switch-to-application-8 = [ ];
         switch-to-application-9 = [ ];
         
-        # Screenshot shortcut (Shift + Windows + S)
-        screenshot = [ "<Shift><Super>s" ];
+        # Rectangular screenshot shortcut (Shift + Windows + S)
+        "show-screenshot-ui" = [ "<Shift><Super>s" ];
       };
       
       # Workspace switching shortcuts (Windows + 1-6)
@@ -126,6 +138,11 @@
       xkb-options = [ "grp:alt_shift_toggle" ];
       per-window = false;
       show-all-sources = true;
+    };
+    
+    # Additional settings to ensure language indicator appears
+    dconf.settings."org/gnome/shell" = {
+      enabled-extensions = [ ];
     };
     
 
