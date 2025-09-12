@@ -5,8 +5,6 @@
 		inputs.disko.nixosModules.disko
 		./hardware-configuration-thinkbook14.nix
 		./hardware-optimizations.nix
-		# ../../nixos/wayland/window-manager.nix
-		# ../../nixos/wayland/login-manager.nix
 		../../nixos/gnome.nix
 		#./disko.nix
 	];

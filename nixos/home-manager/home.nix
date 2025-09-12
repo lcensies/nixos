@@ -103,7 +103,5 @@
 
   programs.home-manager.enable = true;
 
-  # Disable input methods to avoid fcitx5 issues
-  i18n.inputMethod.enabled = null;
 
 }
