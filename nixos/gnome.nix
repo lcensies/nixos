@@ -73,6 +73,9 @@
         switch-to-application-7 = [ ];
         switch-to-application-8 = [ ];
         switch-to-application-9 = [ ];
+        
+        # Screenshot shortcut (Shift + Windows + S)
+        screenshot = [ "<Shift><Super>s" ];
       };
       
       # Workspace switching shortcuts (Windows + 1-6)
