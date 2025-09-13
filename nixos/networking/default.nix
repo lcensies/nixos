@@ -10,8 +10,12 @@
   # wpa_supplicant
   networking.wireless.userControlled.enable = true;
 
-  # networking.networkmanager.wifi.backend = "iwd";
+  # Enable NetworkManager for VPN support
+  networking.networkmanager.enable = true;
+  networking.networkmanager.wifi.backend = "iwd";
   networking.wireless.iwd.enable = true;
+  
+
 
   #networking.firewall.enable = false;
   #networking.firewall.allowedUDPPorts = [...];
@@ -26,17 +30,31 @@
     impala
 
     openconnect
+    openvpn
     nekoray
-    v2raya
+    # v2raya currently not used
+    
+    # NetworkManager VPN support
+    networkmanager-openvpn
   ];
 
-  services.v2raya.enable = true;
+  # services.v2raya.enable = true; currently not used
 
   # sing-box with TUN inbound; read external JSON config, not tracked in git
-  services.sing-box = {
-    enable = true;
-    settings = {};
-  };
+  # services.sing-box = {
+  #   enable = true;
+  #   settings = {};
+  # };
+
+  # Route system traffic via local proxy defaults
+  # environment.variables = {
+  #   http_proxy = "http://127.0.0.1:7890";
+  #   https_proxy = "http://127.0.0.1:7890";
+  #   HTTP_PROXY = "http://127.0.0.1:7890";
+  #   HTTPS_PROXY = "http://127.0.0.1:7890";
+  #   no_proxy = "127.0.0.1,localhost,.local,.lan";
+  #   NO_PROXY = "127.0.0.1,localhost,.local,.lan";
+  # };
 
   # Allow deprecated special outbounds (dns) until we migrate rules fully
   systemd.services."sing-box".environment = {
@@ -52,15 +70,6 @@
   # Allow traffic via TUN interface
   networking.firewall.trustedInterfaces = [ "tun0" ];
 
-  # Route system traffic via local proxy defaults
-  environment.variables = {
-    http_proxy = "http://127.0.0.1:7890";
-    https_proxy = "http://127.0.0.1:7890";
-    HTTP_PROXY = "http://127.0.0.1:7890";
-    HTTPS_PROXY = "http://127.0.0.1:7890";
-    no_proxy = "127.0.0.1,localhost,.local,.lan";
-    NO_PROXY = "127.0.0.1,localhost,.local,.lan";
-  };
 
 
   security.sudo.extraRules = [{

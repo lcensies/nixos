@@ -18,16 +18,22 @@
         python3
 				just
 	# vscodium
-	code-cursor # AI-powered code editor built on vscode
-
+	code-cursor 
+  vscode
 	#Browser
 	firefox
-	chromium
+  # Second firefox
+	librewolf
+  # For compatibility
+  chromium
+  # Just for fun 
 	qutebrowser
+  
 
-	#CLI program
-	kpcli #password manager
-	acpi #battery status
+	# Password manager
+	keepassxc
+
+  acpi #battery status
 
 	imv #image viewer
 	nix-prefetch-github #get hash and head from github repo

@@ -90,4 +90,28 @@ in
     };
   };
 
+  # Keyboard layout restoration service
+  systemd.user.services.keyboard-layout-restore = {
+    description = "Restore keyboard layout after resume";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "/run/current-system/sw/bin/bash -c 'sleep 2 && swaymsg input \"1:1:AT_Translated_Set_2_keyboard\" xkb_layout \"us,ru\" && swaymsg input \"1:1:AT_Translated_Set_2_keyboard\" xkb_options \"grp:win_space_toggle,grp_led:scroll\"'";
+      RemainAfterExit = true;
+    };
+  };
+
+  # Resume hook to restore keyboard layout
+  systemd.user.services.keyboard-layout-resume = {
+    description = "Restore keyboard layout after system resume";
+    wantedBy = [ "suspend.target" ];
+    after = [ "suspend.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "/run/current-system/sw/bin/bash -c 'sleep 1 && swaymsg input \"1:1:AT_Translated_Set_2_keyboard\" xkb_layout \"us,ru\" && swaymsg input \"1:1:AT_Translated_Set_2_keyboard\" xkb_options \"grp:win_space_toggle,grp_led:scroll\"'";
+      RemainAfterExit = true;
+    };
+  };
+
 }

@@ -56,10 +56,24 @@
     after = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "/run/current-system/sw/bin/bash -c 'sleep 5 && gsettings set org.gnome.desktop.input-sources sources \"[(''xkb'', ''us''), (''xkb'', ''ru'')]\" && gsettings set org.gnome.desktop.input-sources mru-sources \"[(''xkb'', ''us''), (''xkb'', ''ru'')]\" && gsettings set org.gnome.desktop.input-sources xkb-options \"[''grp:alt_shift_toggle'']\"'";
+      ExecStart = "/run/current-system/sw/bin/bash -c 'sleep 5 && gsettings set org.gnome.desktop.input-sources sources \"[(''xkb'', ''us''), (''xkb'', ''ru'')]\" && gsettings set org.gnome.desktop.input-sources xkb-options \"[''grp:alt_shift_toggle'']\"'";
       RemainAfterExit = true;
     };
   };
+
+  # Resume hook to restore keyboard layout after suspend
+  systemd.user.services.keyboard-layout-resume = {
+    description = "Restore keyboard layout after system resume";
+    wantedBy = [ "suspend.target" ];
+    after = [ "suspend.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "/run/current-system/sw/bin/bash -c 'sleep 2 && gsettings set org.gnome.desktop.input-sources sources \"[(''xkb'', ''us''), (''xkb'', ''ru'')]\" && gsettings set org.gnome.desktop.input-sources xkb-options \"[''grp:alt_shift_toggle'']\"'";
+      RemainAfterExit = true;
+    };
+  };
+
+
 
   # Home-manager GNOME configuration
   home-manager.users.esc2 = { pkgs, ... }: {
@@ -134,15 +148,15 @@
     # GNOME input sources configuration
     dconf.settings."org/gnome/desktop/input-sources" = {
       sources = [ "('xkb', 'us')" "('xkb', 'ru')" ];
-      mru-sources = [ "('xkb', 'us')" "('xkb', 'ru')" ];
       xkb-options = [ "grp:alt_shift_toggle" ];
-      per-window = false;
       show-all-sources = true;
     };
     
     # Additional settings to ensure language indicator appears
     dconf.settings."org/gnome/shell" = {
-      enabled-extensions = [ ];
+      enabled-extensions = [ 
+        "searchlight@icedman.github.com"
+      ];
     };
     
 

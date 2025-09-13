@@ -33,7 +33,7 @@ in
     
   users.users.esc2 = {
      isNormalUser = true;
-     extraGroups = [ "wheel" "bluetooth" "audio" ]; 
+     extraGroups = [ "wheel" "bluetooth" "audio" "networkmanager" ]; 
      shell = pkgs.zsh;
      ignoreShellProgramCheck = true;
    };
