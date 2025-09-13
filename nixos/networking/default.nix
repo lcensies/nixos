@@ -1,12 +1,10 @@
-{config, pkgs, ...}:
+{ config, pkgs, ... }:
 {
   boot.kernelModules = [ "tun" ];
   networking.hostName = "stable";
 
-
   # networking.wireless.enable = true;
-  
-  
+
   # wpa_supplicant
   networking.wireless.userControlled.enable = true;
 
@@ -14,8 +12,6 @@
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.backend = "iwd";
   networking.wireless.iwd.enable = true;
-  
-
 
   #networking.firewall.enable = false;
   #networking.firewall.allowedUDPPorts = [...];
@@ -23,7 +19,6 @@
 
   #networking.proxy.default = "http://user:password@proxy:port/";
   #networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
 
   environment.systemPackages = with pkgs; [
     # WIFI tui
@@ -33,7 +28,7 @@
     openvpn
     nekoray
     # v2raya currently not used
-    
+
     # NetworkManager VPN support
     networkmanager-openvpn
   ];
@@ -70,22 +65,25 @@
   # Allow traffic via TUN interface
   networking.firewall.trustedInterfaces = [ "tun0" ];
 
-
-
-  security.sudo.extraRules = [{
-      groups = [ "wheel" ]; 
-      commands = [ 
-       {
-         command = "/run/current-system/sw/bin/nekoray";
-         options = ["NOPASSWD" "SETENV"];
-       }
-      ]; 
-  }];
+  security.sudo.extraRules = [
+    {
+      groups = [ "wheel" ];
+      commands = [
+        {
+          command = "/run/current-system/sw/bin/nekoray";
+          options = [
+            "NOPASSWD"
+            "SETENV"
+          ];
+        }
+      ];
+    }
+  ];
 
   #Define your networks here
-  #Syntax : 
+  #Syntax :
   #networking.wireless.networks.Network-Name.psk = "password";
-  
+
   # users.users.esc2.extraGroups = [ "networkmanager" ];
-  
+
 }

@@ -1,4 +1,10 @@
-{ config, inputs, lib, pkgs, ... }:
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Import upstream nixos-hardware common modules similar to os/hosts/akahitoha
@@ -94,5 +100,3 @@
   nixpkgs.config.cudaSupport = false;
   nixpkgs.config.rocmSupport = true;
 }
-
-

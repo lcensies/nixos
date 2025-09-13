@@ -1,10 +1,9 @@
 { inputs, ... }:
 {
-	imports = [
-		./common
-		./networking
-		./virtualization
-		#./silent-boot
-	];
+  imports = [
+    ./common
+    ./networking
+    ./virtualization
+    #./silent-boot
+  ];
 }
-

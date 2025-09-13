@@ -1,4 +1,4 @@
-{config, pkgs, ...}:
+{ config, pkgs, ... }:
 {
   imports = [
     ./containers.nix
@@ -6,13 +6,13 @@
   environment.systemPackages = with pkgs; [
     virt-manager
     virt-viewer
-    spice 
+    spice
     spice-gtk
     # qemu_kvm
     spice-protocol
     win-virtio
     win-spice
-    
+
     vagrant
   ];
 
@@ -32,7 +32,7 @@
     extraGroups = [
       "qemu-libvirtd"
       "libvirtd"
-      
+
       "video"
       "audio"
       "disk"
@@ -45,4 +45,3 @@
   };
 
 }
-

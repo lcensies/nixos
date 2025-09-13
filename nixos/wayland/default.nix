@@ -1,13 +1,13 @@
-{ config, pkgs, ...}:
+{ config, pkgs, ... }:
 {
   imports = [
     ./login-manager.nix
     ./window-manager.nix
   ];
   environment.extraInit = ''
-      #Turn off gui for ssh auth
-      unset -v SSH_ASKPASS
-    '';
+    #Turn off gui for ssh auth
+    unset -v SSH_ASKPASS
+  '';
 
   environment.sessionVariables = rec {
     MOZ_ENABLE_WAYLAND = 1;
@@ -24,5 +24,6 @@
 
   environment.systemPackages = with pkgs; [
     wlroots
+    rofi-power-menu
   ];
 }

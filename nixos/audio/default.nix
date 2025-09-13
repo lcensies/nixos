@@ -1,7 +1,7 @@
 { inputs, ... }:
 {
-	imports = [
-		./general.nix
-		./bluetooth.nix
-	];
+  imports = [
+    ./general.nix
+    ./bluetooth.nix
+  ];
 }

@@ -1,4 +1,4 @@
-{config, pkgs, ...}:
+{ config, pkgs, ... }:
 {
   #Some useful keybinds
   #$ go to end of the line
@@ -11,10 +11,11 @@
   #Autocompletion
   #ctrl + y to autocomplete
   # programs.neovim.coc.enable = true;
- 
+
   programs.neovim.plugins = [
     #Theme
-    { plugin = pkgs.vimPlugins.onehalf;
+    {
+      plugin = pkgs.vimPlugins.onehalf;
       config = ''
         set background=dark
         colorscheme onehalfdark
@@ -30,7 +31,8 @@
     #File browser
     #ctrl + b to open
     #ctrl + w + w to switch focus
-    { plugin = pkgs.vimPlugins.nerdtree;
+    {
+      plugin = pkgs.vimPlugins.nerdtree;
       config = ''
         nnoremap <silent> <C-n> :NERDTreeToggle<CR>
         let g:NERDTreeShowHidden = 1
@@ -45,7 +47,7 @@
 
     #Icons
     pkgs.vimPlugins.vim-devicons
-    
+
     #Language support
     # pkgs.vimPlugins.vim-nix
     # pkgs.vimPlugins.coc-python

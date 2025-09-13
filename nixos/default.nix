@@ -1,13 +1,12 @@
 { inputs, ... }:
 {
-	imports = [
-		./common
+  imports = [
+    ./common
 
-		./audio
-		./networking
-		./virtualization
-		./silent-boot
-		./wayland
-	];
+    ./audio
+    ./networking
+    ./virtualization
+    ./silent-boot
+    ./wayland
+  ];
 }
-

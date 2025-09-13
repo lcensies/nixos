@@ -1,85 +1,89 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 {
   imports = [
-	# ./config/git.nix
-  ./config/theme.nix
-	./config/bashrc.nix
-	# ./config/alacritty.nix
-	#./config/neovim.nix
-        ./config/waybar.nix
-        # ./config/firefox.nix
-        # ./config/yt-dlp.nix
+    # ./config/git.nix
+    ./config/theme.nix
+    ./config/bashrc.nix
+    # ./config/alacritty.nix
+    #./config/neovim.nix
+    ./config/waybar.nix
+    # ./config/firefox.nix
+    # ./config/yt-dlp.nix
   ];
   nixpkgs.config.allowUnfree = true;
 
   home.packages = with pkgs; [
-        git 
-        rcm
-        python3
-				just
-	# vscodium
-	code-cursor 
-  vscode
-	#Browser
-	firefox
-  # Second firefox
-	librewolf
-  # For compatibility
-  chromium
-  # Just for fun 
-	qutebrowser
-  
+    git
+    rcm
+    python3
+    just
+    # vscodium
+    code-cursor
+    vscode
+    #Browser
+    firefox
+    # Second firefox
+    librewolf
+    # For compatibility
+    chromium
+    # Just for fun
+    qutebrowser
 
-	# Password manager
-	keepassxc
+    # Password manager
+    keepassxc
 
-  acpi #battery status
+    acpi # battery status
 
-	imv #image viewer
-	nix-prefetch-github #get hash and head from github repo
+    imv # image viewer
+    nix-prefetch-github # get hash and head from github repo
 
-	#Color palette
-	eyedropper
-	
-	#File browser
-	xfce.thunar
-	
-	#Video viewer
-	haruna
+    #Color palette
+    eyedropper
 
-	#Video editor
-	shotcut
-	
-	#Image editor
-	pinta
-	inkscape
+    #File browser
+    xfce.thunar
 
-	#Messaging app
-	# signal-desktop
-	telegram-desktop
+    #Video viewer
+    haruna
 
-	#Office suite
-	libreoffice
+    #Video editor
+    shotcut
 
-	#Font
-	jetbrains-mono
-        nerd-fonts.jetbrains-mono
-        nerd-fonts.fira-code
-        nerd-fonts.hack
-        
-	# Note taking
-	obsidian
+    #Image editor
+    pinta
+    inkscape
 
-	# File synchronization
-	syncthing
-        ];
+    #Messaging app
+    # signal-desktop
+    telegram-desktop
 
-    programs.direnv = {
-      enable = true;
-      enableBashIntegration = true; # see note on other shells below
-      enableZshIntegration = true;
-      nix-direnv.enable = true;
-    };
+    #Office suite
+    libreoffice
+
+    #Font
+    jetbrains-mono
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-code
+    nerd-fonts.hack
+
+    # Note taking
+    obsidian
+
+    # File synchronization
+    syncthing
+  ];
+
+  programs.direnv = {
+    enable = true;
+    enableBashIntegration = true; # see note on other shells below
+    enableZshIntegration = true;
+    nix-direnv.enable = true;
+  };
 
   # Syncthing service - managed manually via systemd user service
   systemd.user.services.syncthing = {
@@ -93,7 +97,10 @@
       ExecStart = "${pkgs.syncthing}/bin/syncthing serve --config=/home/esc2/.config/syncthing --data=/home/esc2/.local/share/syncthing --no-browser --no-restart";
       Restart = "on-failure";
       RestartSec = 5;
-      SuccessExitStatus = [ "0" "2" ];
+      SuccessExitStatus = [
+        "0"
+        "2"
+      ];
       TimeoutStopSec = 5;
       KillMode = "mixed";
     };
@@ -106,8 +113,6 @@
   home.homeDirectory = "/home/esc2";
   home.stateVersion = "24.05";
 
-
   programs.home-manager.enable = true;
-
 
 }

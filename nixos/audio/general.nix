@@ -1,4 +1,4 @@
-{config, pkgs, ...}:
+{ config, pkgs, ... }:
 {
   security.rtkit.enable = true;
   services.pipewire = {
@@ -8,7 +8,7 @@
     pulse.enable = true;
     jack.enable = true;
   };
-  
+
   # Override PulseAudio default.pa to comment out bluetooth modules
   # This helps with bluetooth connectivity issues as suggested by ArchWiki
   environment.etc."pulse/default.pa".text = ''
@@ -124,7 +124,7 @@
     load-module module-gsettings
     .endif
   '';
-  
+
   environment.systemPackages = with pkgs; [
     pulseaudio
     pulsemixer

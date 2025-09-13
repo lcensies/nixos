@@ -1,22 +1,18 @@
 { config, pkgs, ... }:
 
 let
-  unstableTarball =
-    fetchTarball
-      https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz;
+  unstableTarball = fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
 in
 
 {
 
-
-
   nixpkgs.config = {
-      allowUnfree = true;
-      packageOverrides = pkgs: {
-        #unstable = import unstableTarball {
-        #  config = config.nixpkgs.config;
-        #};
-      };
+    allowUnfree = true;
+    packageOverrides = pkgs: {
+      #unstable = import unstableTarball {
+      #  config = config.nixpkgs.config;
+      #};
+    };
   };
 
   time.timeZone = "Europe/Moscow";
@@ -30,14 +26,19 @@ in
   environment.variables = {
     FZF_DEFAULT_OPTS = "--height 40% --reverse --border";
   };
-    
+
   users.users.esc2 = {
-     isNormalUser = true;
-     extraGroups = [ "wheel" "bluetooth" "audio" "networkmanager" ]; 
-     shell = pkgs.zsh;
-     ignoreShellProgramCheck = true;
-   };
-  
+    isNormalUser = true;
+    extraGroups = [
+      "wheel"
+      "bluetooth"
+      "audio"
+      "networkmanager"
+    ];
+    shell = pkgs.zsh;
+    ignoreShellProgramCheck = true;
+  };
+
   environment.systemPackages = with pkgs; [
     bc
     vim
@@ -55,7 +56,7 @@ in
     starship
     kitty
     zoxide
-    jq  
+    jq
     fzf
     ripgrep
     zsh-fzf-tab
@@ -66,13 +67,13 @@ in
     nekoray
     zoxide
     atuin
-    rofi-power-menu
     impala
     bluetuith
-   ];
+    nixfmt
+  ];
 
-  services.resolved.enable = true; 
-  programs.nekoray.tunMode.enable= true;
+  services.resolved.enable = true;
+  programs.nekoray.tunMode.enable = true;
   #programs.mtr.enable = true;
   #programs.gnupg.agent = {
   #  enable = true;
@@ -80,7 +81,7 @@ in
   #};
 
   services.openssh.enable = true;
-  #services.printing.enable = true;    
+  #services.printing.enable = true;
 
   # Shell configuration
   programs.zsh = {

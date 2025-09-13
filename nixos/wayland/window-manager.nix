@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   dbus-sway-environment = pkgs.writeTextFile {
@@ -48,7 +53,8 @@ in
     whitesur-icon-theme
     capitaine-cursors
 
-    rofi-wayland 
+    rofi-wayland
+    rofi-power-menu
     kanshi
   ];
 
@@ -77,13 +83,13 @@ in
     '';
   };
 
-    # kanshi systemd service
+  # kanshi systemd service
   systemd.user.services.kanshi = {
     description = "kanshi daemon";
     environment = {
-      WAYLAND_DISPLAY="wayland-1";
+      WAYLAND_DISPLAY = "wayland-1";
       DISPLAY = ":0";
-    }; 
+    };
     serviceConfig = {
       Type = "simple";
       ExecStart = ''${pkgs.kanshi}/bin/kanshi -c /home/esc2/.config/kanshi/config'';

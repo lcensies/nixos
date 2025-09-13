@@ -7,7 +7,6 @@
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
-
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     #home-manager.backupFileExtension = "backup";
@@ -57,8 +56,8 @@
           vmw = nixpkgs.lib.nixosSystem {
             inherit specialArgs;
             system = "x86_64-linux";
-            modules = [ 
-              ./hosts/vmw 
+            modules = [
+              ./hosts/vmw
             ];
           };
 
@@ -66,9 +65,9 @@
           thinkbook14 = nixpkgs.lib.nixosSystem {
             inherit specialArgs;
             system = "x86_64-linux";
-            modules = [ 
-              ./hosts/thinkbook14 
-              ./nixos/home-manager  # Fixed fcitx5 issue with package override
+            modules = [
+              ./hosts/thinkbook14
+              ./nixos/home-manager # Fixed fcitx5 issue with package override
             ];
           };
 
@@ -76,8 +75,8 @@
           rollback = nixpkgs.lib.nixosSystem {
             inherit specialArgs;
             system = "x86_64-linux";
-            modules = [ 
-              ./hosts/rollback 
+            modules = [
+              ./hosts/rollback
             ];
           };
 
