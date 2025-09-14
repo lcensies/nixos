@@ -70,6 +70,7 @@ in
     impala
     bluetuith
     nixfmt
+    lsof
   ];
 
   services.resolved.enable = true;

@@ -77,15 +77,16 @@
   };
 
   # Run ryzenadj once on boot with power-saving profile
-  systemd.services.ryzenadj = {
-    description = "ryzenadj --power-saving";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${lib.getExe pkgs.ryzenadj} --power-saving";
-    };
-  };
+  # Temporarily disabled due to hardware compatibility issues
+  # systemd.services.ryzenadj = {
+  #   description = "ryzenadj --power-saving";
+  #   wantedBy = [ "multi-user.target" ];
+  #   after = [ "multi-user.target" ];
+  #   serviceConfig = {
+  #     Type = "oneshot";
+  #     ExecStart = "${lib.getExe pkgs.ryzenadj} --power-saving";
+  #   };
+  # };
 
   # Firmware and graphics
   hardware.firmware = with pkgs; [ linux-firmware ];

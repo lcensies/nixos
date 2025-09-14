@@ -35,21 +35,19 @@
 
   # services.v2raya.enable = true; currently not used
 
-  # sing-box with TUN inbound; read external JSON config, not tracked in git
-  # services.sing-box = {
-  #   enable = true;
-  #   settings = {};
-  # };
+  services.sing-box = {
+    enable = true;
+    settings = {};
+  };
 
-  # Route system traffic via local proxy defaults
-  # environment.variables = {
-  #   http_proxy = "http://127.0.0.1:7890";
-  #   https_proxy = "http://127.0.0.1:7890";
-  #   HTTP_PROXY = "http://127.0.0.1:7890";
-  #   HTTPS_PROXY = "http://127.0.0.1:7890";
-  #   no_proxy = "127.0.0.1,localhost,.local,.lan";
-  #   NO_PROXY = "127.0.0.1,localhost,.local,.lan";
-  # };
+  environment.variables = {
+    http_proxy = "http://127.0.0.1:7890";
+    https_proxy = "http://127.0.0.1:7890";
+    HTTP_PROXY = "http://127.0.0.1:7890";
+    HTTPS_PROXY = "http://127.0.0.1:7890";
+    no_proxy = "127.0.0.1,localhost,.local,.lan";
+    NO_PROXY = "127.0.0.1,localhost,.local,.lan";
+  };
 
   # Allow deprecated special outbounds (dns) until we migrate rules fully
   systemd.services."sing-box".environment = {

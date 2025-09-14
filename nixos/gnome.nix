@@ -18,6 +18,7 @@
     gnome-shell-extensions
     gnome-tweaks
     sxhkd
+    # glib
   ];
 
   # Configure keyboard layout for Russian/English switching
@@ -27,6 +28,10 @@
       options = "grp:alt_shift_toggle";
     };
   };
+
+  # GTK theme configuration to fix CSS import errors
+  # programs.dconf.enable = true;
+  # services.dbus.packages = with pkgs; [ dconf ];
 
   # Enable internationalization support
   i18n = {
@@ -49,28 +54,28 @@
   };
 
   # Systemd service to ensure language switching works after login
-  systemd.user.services.language-setup = {
-    description = "Setup language switching for GNOME";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "/run/current-system/sw/bin/bash -c 'sleep 5 && gsettings set org.gnome.desktop.input-sources sources \"[(''xkb'', ''us''), (''xkb'', ''ru'')]\" && gsettings set org.gnome.desktop.input-sources xkb-options \"[''grp:alt_shift_toggle'']\"'";
-      RemainAfterExit = true;
-    };
-  };
+  # systemd.user.services.language-setup = {
+  #   description = "Setup language switching for GNOME";
+  #   wantedBy = [ "graphical-session.target" ];
+  #   after = [ "graphical-session.target" ];
+  #   serviceConfig = {
+  #     Type = "oneshot";
+  #     ExecStart = "/run/current-system/sw/bin/bash -c 'sleep 5 && /run/current-system/sw/bin/gsettings set org.gnome.desktop.input-sources sources \"[(''xkb'', ''us''), (''xkb'', ''ru'')]\" && /run/current-system/sw/bin/gsettings set org.gnome.desktop.input-sources xkb-options \"[''grp:alt_shift_toggle'']\"'";
+  #     RemainAfterExit = true;
+  #   };
+  # };
 
-  # Resume hook to restore keyboard layout after suspend
-  systemd.user.services.keyboard-layout-resume = {
-    description = "Restore keyboard layout after system resume";
-    wantedBy = [ "suspend.target" ];
-    after = [ "suspend.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "/run/current-system/sw/bin/bash -c 'sleep 2 && gsettings set org.gnome.desktop.input-sources sources \"[(''xkb'', ''us''), (''xkb'', ''ru'')]\" && gsettings set org.gnome.desktop.input-sources xkb-options \"[''grp:alt_shift_toggle'']\"'";
-      RemainAfterExit = true;
-    };
-  };
+  # # Resume hook to restore keyboard layout after suspend
+  # systemd.user.services.keyboard-layout-resume = {
+  #   description = "Restore keyboard layout after system resume";
+  #   wantedBy = [ "suspend.target" ];
+  #   after = [ "suspend.target" ];
+  #   serviceConfig = {
+  #     Type = "oneshot";
+  #     ExecStart = "/run/current-system/sw/bin/bash -c 'sleep 2 && /run/current-system/sw/bin/gsettings set org.gnome.desktop.input-sources sources \"[(''xkb'', ''us''), (''xkb'', ''ru'')]\" && /run/current-system/sw/bin/gsettings set org.gnome.desktop.input-sources xkb-options \"[''grp:alt_shift_toggle'']\"'";
+  #     RemainAfterExit = true;
+  #   };
+  # };
 
   # Home-manager GNOME configuration
   home-manager.users.esc2 =
