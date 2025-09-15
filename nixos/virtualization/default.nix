@@ -30,6 +30,23 @@
     spiceUSBRedirection.enable = true;
   };
 
+  # Enable default libvirt network
+  virtualisation.libvirtd.allowedBridges = [ "virbr0" ];
+
+  # Start default libvirt network automatically
+  systemd.services.libvirt-default-network = {
+    description = "Start default libvirt network";
+    after = [ "libvirtd.service" ];
+    requires = [ "libvirtd.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.libvirt}/bin/virsh net-start default";
+      ExecStop = "${pkgs.libvirt}/bin/virsh net-destroy default";
+    };
+    wantedBy = [ "multi-user.target" ];
+  };
+
   users.users.esc2 = {
     extraGroups = [
       "qemu-libvirtd"
