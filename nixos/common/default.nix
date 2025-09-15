@@ -71,6 +71,10 @@ in
     bluetuith
     nixfmt
     lsof
+
+    # Additional development packages
+    gcc
+    llvmPackages_latest.llvm
   ];
 
   services.resolved.enable = true;
@@ -92,6 +96,7 @@ in
     syntaxHighlighting.enable = true;
     # Enable atuin zsh integration
   };
+  
 
   # Doesn't work well with sway on current
   # hardware
@@ -100,4 +105,5 @@ in
   # '';
   # IdleActionSec
   system.stateVersion = "22.11";
+
 }
