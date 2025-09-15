@@ -17,41 +17,69 @@
     dconf-editor
     gnome-shell-extensions
     gnome-tweaks
-    sxhkd
+    # sxhkd  # Remove sxhkd as it's for Sway, not GNOME
     # glib
+    # gtk3
+    # gtk4
+    # adwaita-icon-theme
+    # gnome-themes-extra
+    # gtk-engine-murrine
+    # gsettings-desktop-schemas
+    # gtk3.dev
+    # gtk4.dev
   ];
 
   # Configure keyboard layout for Russian/English switching
   services.xserver = {
+    # enable = true;
     xkb = {
       layout = "us,ru";
       options = "grp:alt_shift_toggle";
     };
   };
 
+  # Enable XWayland for X11 application compatibility
+  # services.xserver.desktopManager.gnome.sessionPath = [ pkgs.gnome.gnome-session-extra ];
+  # programs.xwayland.enable = true;
+
   # GTK theme configuration to fix CSS import errors
-  # programs.dconf.enable = true;
-  # services.dbus.packages = with pkgs; [ dconf ];
+  programs.dconf.enable = true;
+  services.dbus.packages = with pkgs; [ dconf ];
+  
+  # Set default GTK theme to fix CSS import errors
+  environment.variables = {
+    GTK_THEME = "Adwaita:dark";
+    QT_STYLE_OVERRIDE = "adwaita-dark";
+    GTK_DATA_PREFIX = "${pkgs.gtk3}";
+    GTK_EXE_PREFIX = "${pkgs.gtk3}";
+    GTK_PATH = "${pkgs.gtk3}";
+    XDG_DATA_DIRS = lib.mkForce "${pkgs.gtk3}/share:${pkgs.gtk4}/share:${pkgs.adwaita-icon-theme}/share:${pkgs.gnome-themes-extra}/share";
+    # XWayland environment variables
+    GDK_BACKEND = "wayland,x11";
+    QT_QPA_PLATFORM = "wayland;xcb";
+    MOZ_ENABLE_WAYLAND = "1";
+    NIXOS_OZONE_WL = "1";
+  };
 
   # Enable internationalization support
-  i18n = {
-    defaultLocale = "en_US.UTF-8";
-    supportedLocales = [
-      "en_US.UTF-8/UTF-8"
-      "ru_RU.UTF-8/UTF-8"
-    ];
-    extraLocaleSettings = {
-      LC_ADDRESS = "ru_RU.UTF-8";
-      LC_IDENTIFICATION = "ru_RU.UTF-8";
-      LC_MEASUREMENT = "ru_RU.UTF-8";
-      LC_MONETARY = "ru_RU.UTF-8";
-      LC_NAME = "ru_RU.UTF-8";
-      LC_NUMERIC = "ru_RU.UTF-8";
-      LC_PAPER = "ru_RU.UTF-8";
-      LC_TELEPHONE = "ru_RU.UTF-8";
-      LC_TIME = "ru_RU.UTF-8";
-    };
-  };
+  # i18n = {
+  #   defaultLocale = "en_US.UTF-8";
+  #   supportedLocales = [
+  #     "en_US.UTF-8/UTF-8"
+  #     "ru_RU.UTF-8/UTF-8"
+  #   ];
+  #   extraLocaleSettings = {
+  #     LC_ADDRESS = "ru_RU.UTF-8";
+  #     LC_IDENTIFICATION = "ru_RU.UTF-8";
+  #     LC_MEASUREMENT = "ru_RU.UTF-8";
+  #     LC_MONETARY = "ru_RU.UTF-8";
+  #     LC_NAME = "ru_RU.UTF-8";
+  #     LC_NUMERIC = "ru_RU.UTF-8";
+  #     LC_PAPER = "ru_RU.UTF-8";
+  #     LC_TELEPHONE = "ru_RU.UTF-8";
+  #     LC_TIME = "ru_RU.UTF-8";
+  #   };
+  # };
 
   # Systemd service to ensure language switching works after login
   # systemd.user.services.language-setup = {
@@ -139,10 +167,7 @@
           move-to-monitor-down = [ ];
         };
 
-        # Disable workspace switching animations
-        "org/gnome/desktop/interface" = {
-          enable-animations = false;
-        };
+        # Disable workspace switching animations (moved to main interface settings below)
 
         "org/gnome/shell/extensions/desktop-icons-ng" = {
           enable-animations = false;
@@ -165,6 +190,33 @@
           "searchlight@icedman.github.com"
         ];
       };
+
+      # Fix GTK theme CSS import errors
+      # dconf.settings."org/gnome/desktop/interface" = {
+      #   gtk-theme = lib.mkForce "Adwaita-dark";
+      #   icon-theme = lib.mkForce "Adwaita";
+      #   cursor-theme = lib.mkForce "Adwaita";
+      #   enable-animations = false;
+      # };
+
+      # # Additional GTK settings
+      # dconf.settings."org/gnome/desktop/wm/preferences" = {
+      #   theme = "Adwaita";
+      # };
+
+      # # Systemd service to fix GTK CSS resource issues
+      # systemd.user.services.gtk-css-fix = {
+      #   Unit = {
+      #     Description = "Fix GTK CSS resource issues";
+      #     WantedBy = [ "graphical-session.target" ];
+      #     After = [ "graphical-session.target" ];
+      #   };
+      #   Service = {
+      #     Type = "oneshot";
+      #     ExecStart = "/run/current-system/sw/bin/bash -c 'mkdir -p ~/.local/share/themes/Adwaita-dark/gtk-3.0 && cp ${pkgs.gtk3}/share/themes/Adwaita-dark/gtk-3.0/gtk.css ~/.local/share/themes/Adwaita-dark/gtk-3.0/ && export GTK_DATA_PREFIX=${pkgs.gtk3} && export GTK_EXE_PREFIX=${pkgs.gtk3} && export GTK_PATH=${pkgs.gtk3} && /run/current-system/sw/bin/gsettings set org.gnome.desktop.interface gtk-theme \"Adwaita-dark\" && /run/current-system/sw/bin/gsettings set org.gnome.desktop.interface icon-theme \"Adwaita\" && /run/current-system/sw/bin/gsettings set org.gnome.desktop.interface cursor-theme \"Adwaita\"'";
+      #     RemainAfterExit = true;
+      #   };
+      # };
 
     };
 }
