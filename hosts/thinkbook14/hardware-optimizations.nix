@@ -17,6 +17,10 @@
     common-hidpi
   ];
 
+  # Enable NFS support
+  # boot.supportedFilesystems = [ "nfs" ];
+  # services.rpcbind.enable = true; # needed for NFS
+
   boot.initrd.availableKernelModules = [
     "nvme"
     "xhci_pci"
