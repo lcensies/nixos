@@ -7,6 +7,8 @@
 }:
 
 {
+  
+
   # Import upstream nixos-hardware common modules similar to os/hosts/akahitoha
   imports = with inputs.nixos-hardware.nixosModules; [
     common-cpu-amd
@@ -104,4 +106,6 @@
   # ROCm support flags
   nixpkgs.config.cudaSupport = false;
   nixpkgs.config.rocmSupport = true;
+
+
 }
