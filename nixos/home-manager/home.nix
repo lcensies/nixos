@@ -79,6 +79,9 @@
 
     # File synchronization
     syncthing
+
+    # Remote desktop
+    remmina 
   ];
 
   programs.direnv = {
@@ -156,9 +159,6 @@
     };
   };
 
-  home.sessionPath = [
-    "/home/esc2/.local/bin"
-  ];
 
   home.username = "esc2";
   home.homeDirectory = "/home/esc2";
