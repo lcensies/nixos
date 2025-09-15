@@ -112,6 +112,50 @@
     };
   };
 
+  # Packer QEMU plugin installation service - runs once after system boot
+  systemd.user.services.packer-qemu-plugin = {
+    Unit = {
+      Description = "Install Packer QEMU plugin";
+      After = [ "network.target" "graphical-session.target" ];
+      Wants = [ "network.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "install-packer-qemu-plugin" ''
+        #!/bin/bash
+        set -euo pipefail
+        
+        # Check if packer is available
+        if ! command -v packer >/dev/null 2>&1; then
+          echo "Packer not found, skipping plugin installation"
+          exit 0
+        fi
+        
+        # Check if QEMU plugin is already installed
+        if packer plugins installed | grep -q "github.com/hashicorp/qemu"; then
+          echo "Packer QEMU plugin already installed"
+          exit 0
+        fi
+        
+        echo "Installing Packer QEMU plugin..."
+        packer plugins install github.com/hashicorp/qemu
+        
+        if packer plugins installed | grep -q "github.com/hashicorp/qemu"; then
+          echo "Packer QEMU plugin installed successfully"
+        else
+          echo "Failed to install Packer QEMU plugin"
+          exit 1
+        fi
+      '';
+      RemainAfterExit = true;
+      StandardOutput = "journal";
+      StandardError = "journal";
+    };
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
+  };
+
   home.sessionPath = [
     "/home/esc2/.local/bin"
   ];
