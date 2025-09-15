@@ -14,6 +14,7 @@
     win-spice
 
     vagrant
+    packer
   ];
 
   virtualisation = {
@@ -43,5 +44,6 @@
     VAGRANT_DEFAULT_PROVIDER = "libvirt";
     LIBVIRT_DEFAULT_URI = "qemu:///system";
   };
+
 
 }
