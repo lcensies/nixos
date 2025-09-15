@@ -5,6 +5,9 @@ let
 in
 
 {
+  imports = [
+    ./kernel.nix
+  ];
 
   nixpkgs.config = {
     allowUnfree = true;
@@ -71,6 +74,8 @@ in
     bluetuith
     nixfmt
     lsof
+    libisoburn
+
 
     # Additional development packages
     gcc
