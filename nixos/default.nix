@@ -6,6 +6,6 @@
     ./networking
     ./virtualization
     ./silent-boot
-    ./wayland
+    # ./wayland  # Disabled to prevent conflict with GNOME GDM
   ];
 }
