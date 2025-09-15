@@ -25,7 +25,7 @@ in
 	./networking
 	
 	#wayland - sway
-	./wayland
+	# ./wayland
 	
 	./common
 

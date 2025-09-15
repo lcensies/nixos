@@ -17,6 +17,7 @@
     dconf-editor
     gnome-shell-extensions
     gnome-tweaks
+    wlroots
     # sxhkd  # Remove sxhkd as it's for Sway, not GNOME
     # glib
     # gtk3
