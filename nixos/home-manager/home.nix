@@ -7,13 +7,16 @@
 {
   imports = [
     # ./config/git.nix
-    ./config/theme.nix
     ./config/bashrc.nix
     # ./config/alacritty.nix
     #./config/neovim.nix
-    ./config/waybar.nix
     # ./config/firefox.nix
     # ./config/yt-dlp.nix
+
+
+    # Sway specific
+    #./config/theme.nix
+    #./config/waybar.nix
   ];
   nixpkgs.config.allowUnfree = true;
 
@@ -60,7 +63,7 @@
 
     #Messaging app
     # signal-desktop
-    telegram-desktop
+    # telegram-desktop fuck telegram, don't need it anymore
 
     #Office suite
     libreoffice
@@ -108,6 +111,10 @@
       WantedBy = [ "default.target" ];
     };
   };
+
+  home.sessionPath = [
+    "/home/esc2/.local/bin"
+  ];
 
   home.username = "esc2";
   home.homeDirectory = "/home/esc2";
