@@ -82,6 +82,9 @@
 
     # Remote desktop
     remmina 
+
+    # Diagrams
+    drawio
   ];
 
   programs.direnv = {

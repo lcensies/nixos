@@ -6,7 +6,8 @@
   environment.systemPackages = with pkgs; [
     virt-manager
     virt-viewer
-    libguestfs
+    # libguestfs
+    libguestfs-with-appliance
     spice
     spice-gtk
     # qemu_kvm

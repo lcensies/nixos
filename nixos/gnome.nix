@@ -18,6 +18,8 @@
     gnome-shell-extensions
     gnome-tweaks
     wlroots
+    # Language switching support
+    ibus
     # sxhkd  # Remove sxhkd as it's for Sway, not GNOME
     # glib
     # gtk3
@@ -30,14 +32,41 @@
     # gtk4.dev
   ];
 
-  # Configure keyboard layout for Russian/English switching
-  services.xserver = {
-    # enable = true;
-    xkb = {
-      layout = "us,ru";
-      options = "grp:alt_shift_toggle";
+  # Internationalization configuration
+  i18n = {
+    defaultLocale = "en_US.UTF-8";
+    extraLocaleSettings = {
+      LC_TIME = "ru_RU.UTF-8";
+      LC_MONETARY = "ru_RU.UTF-8";
+      LC_PAPER = "ru_RU.UTF-8";
+      LC_MEASUREMENT = "ru_RU.UTF-8";
     };
+    supportedLocales = [
+      "en_US.UTF-8/UTF-8"
+      "ru_RU.UTF-8/UTF-8"
+    ];
   };
+  
+  # Set timezone
+  time.timeZone = "Europe/Moscow";
+
+  # use ntpd-rs instead of systemd-timesyncd
+  # services.timesyncd.enable = false;
+  # services.ntpd-rs.enable = true;
+  # services.ntpd-rs.useNetworkingTimeServers = true;
+  # https://nixos.wiki/wiki/NTP
+
+
+
+  # Configure keyboard layout for Russian/English switching
+  # Note: For GNOME on Wayland, keyboard layout is configured via dconf settings below
+  # services.xserver = {
+  #   # enable = true;
+  #   xkb = {
+  #     layout = "us,ru";
+  #     options = "grp:alt_shift_toggle";
+  #   };
+  # };
 
   # Enable XWayland for X11 application compatibility
   # services.xserver.desktopManager.gnome.sessionPath = [ pkgs.gnome.gnome-session-extra ];
@@ -46,6 +75,12 @@
   # GTK theme configuration to fix CSS import errors
   programs.dconf.enable = true;
   services.dbus.packages = with pkgs; [ dconf ];
+  
+  # Enable input method framework for better language switching
+  i18n.inputMethod = {
+    type = "ibus";
+    enable = true;
+  };
   
   # Set default GTK theme to fix CSS import errors
   environment.variables = {
@@ -60,6 +95,10 @@
     QT_QPA_PLATFORM = "wayland;xcb";
     MOZ_ENABLE_WAYLAND = "1";
     NIXOS_OZONE_WL = "1";
+    # IBus environment variables
+    GTK_IM_MODULE = "ibus";
+    QT_IM_MODULE = "ibus";
+    XMODIFIERS = "@im=ibus";
   };
 
   # Enable internationalization support
@@ -177,12 +216,20 @@
 
       # GNOME input sources configuration
       dconf.settings."org/gnome/desktop/input-sources" = {
-        sources = [
-          "('xkb', 'us')"
-          "('xkb', 'ru')"
-        ];
-        xkb-options = [ "grp:alt_shift_toggle" ];
+        # Enable showing all input sources in the panel
         show-all-sources = true;
+        
+        # Configure keyboard layouts: US English and Russian
+        sources = [
+          [ "xkb" "us" ]
+          [ "xkb" "ru" ]
+        ];
+        
+        # Set Alt+Shift as the keyboard layout toggle combination
+        xkb-options = [ "grp:alt_shift_toggle" ];
+        
+        # Clear most recently used sources (starts fresh)
+        mru-sources = [];
       };
 
       # Additional settings to ensure language indicator appears
@@ -191,6 +238,24 @@
           "searchlight@icedman.github.com"
         ];
       };
+
+      # Systemd service to ensure input sources are properly configured after login
+      # Uses script from ~/.scripts/ which is deployed via rcup
+      systemd.user.services.input-sources-setup = {
+        Unit = {
+          Description = "Setup input sources for GNOME";
+          After = [ "graphical-session.target" ];
+        };
+        Service = {
+          Type = "oneshot";
+          ExecStart = "/home/esc2/.scripts/setup-input-sources.sh";
+          RemainAfterExit = true;
+        };
+        Install = {
+          WantedBy = [ "graphical-session.target" ];
+        };
+      };
+
 
       # Fix GTK theme CSS import errors
       # dconf.settings."org/gnome/desktop/interface" = {
