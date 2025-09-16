@@ -20,6 +20,26 @@ in
 
   time.timeZone = "Europe/Moscow";
 
+  # Enable internationalization support
+  i18n = {
+    defaultLocale = "en_US.UTF-8";
+    supportedLocales = [
+      "en_US.UTF-8/UTF-8"
+      "ru_RU.UTF-8/UTF-8"
+    ];
+    extraLocaleSettings = {
+      LC_ADDRESS = "ru_RU.UTF-8";
+      LC_IDENTIFICATION = "ru_RU.UTF-8";
+      LC_MEASUREMENT = "ru_RU.UTF-8";
+      LC_MONETARY = "ru_RU.UTF-8";
+      LC_NAME = "ru_RU.UTF-8";
+      LC_NUMERIC = "ru_RU.UTF-8";
+      LC_PAPER = "ru_RU.UTF-8";
+      LC_TELEPHONE = "ru_RU.UTF-8";
+      LC_TIME = "ru_RU.UTF-8";
+    };
+  };
+
   environment.sessionVariables = rec {
     XDG_CONFIG_HOME = "\${HOME}/.config";
     XCURSOR_SIZE = "64";
@@ -75,7 +95,7 @@ in
     nixfmt
     lsof
     libisoburn
-
+    
 
     # Additional development packages
     gcc
@@ -99,9 +119,18 @@ in
     enableCompletion = true;
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
-    # Enable atuin zsh integration
   };
-  
+
+  # Atuin zsh integration is handled manually in ~/.zshrc
+
+  # Activation script to run input sources setup after rebuilds
+  system.activationScripts.inputSourcesSetup = ''
+    # Run input sources setup script if we're in a graphical session
+    if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
+      echo "Setting up input sources after rebuild..."
+      /home/esc2/.scripts/setup-input-sources.sh || true
+    fi
+  '';
 
   # Doesn't work well with sway on current
   # hardware

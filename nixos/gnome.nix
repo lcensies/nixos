@@ -256,6 +256,47 @@
         };
       };
 
+      # Additional service that can be triggered manually after rebuilds
+      systemd.user.services.input-sources-rebuild = {
+        Unit = {
+          Description = "Setup input sources after NixOS rebuild";
+          After = [ "graphical-session.target" ];
+        };
+        Service = {
+          Type = "oneshot";
+          ExecStart = "/home/esc2/.scripts/setup-input-sources.sh";
+          RemainAfterExit = true;
+        };
+        Install = {
+          WantedBy = [ "default.target" ];
+        };
+      };
+
+      # Timer to run input sources setup after systemd user reload
+      systemd.user.timers.input-sources-timer = {
+        Unit = {
+          Description = "Timer for input sources setup";
+        };
+        Timer = {
+          OnActiveSec = "5s";
+          Persistent = true;
+        };
+        Install = {
+          WantedBy = [ "timers.target" ];
+        };
+      };
+
+      # Service triggered by the timer
+      systemd.user.services.input-sources-timer = {
+        Unit = {
+          Description = "Setup input sources via timer";
+        };
+        Service = {
+          Type = "oneshot";
+          ExecStart = "/home/esc2/.scripts/setup-input-sources.sh";
+        };
+      };
+
 
       # Fix GTK theme CSS import errors
       # dconf.settings."org/gnome/desktop/interface" = {
