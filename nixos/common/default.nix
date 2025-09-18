@@ -97,9 +97,19 @@ in
     libisoburn
     
 
+  
     # Additional development packages
+    openssl
+    # C/C++
     gcc
     llvmPackages_latest.llvm
+    # Python
+    poetry
+    uv
+    # Rust
+    cargo
+    rustc
+
   ];
 
   services.resolved.enable = true;
@@ -109,6 +119,16 @@ in
   #  enable = true;
   #  enableSSHSupport = true;
   #};
+
+  # Nix configuration with flakes support
+  nix = {
+    gc.automatic = true;
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      auto-optimise-store = true;
+      trusted-users = [ "root" "esc2" ];
+    };
+  };
 
   services.openssh.enable = true;
   #services.printing.enable = true;
