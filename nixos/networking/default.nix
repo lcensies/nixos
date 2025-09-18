@@ -1,5 +1,8 @@
 { config, pkgs, ... }:
 {
+  # Import sing-box configuration
+  # imports = [ ./sing-box.nix ];
+
   boot.kernelModules = [ "tun" ];
   networking.hostName = "stable";
 
@@ -35,48 +38,12 @@
 
   # services.v2raya.enable = true; currently not used
 
-  services.sing-box = {
-    enable = true;
-    settings = {};
-  };
-
-  environment.variables = {
-    http_proxy = "http://127.0.0.1:7890";
-    https_proxy = "http://127.0.0.1:7890";
-    HTTP_PROXY = "http://127.0.0.1:7890";
-    HTTPS_PROXY = "http://127.0.0.1:7890";
-    no_proxy = "127.0.0.1,localhost,.local,.lan";
-    NO_PROXY = "127.0.0.1,localhost,.local,.lan";
-  };
-
-  # Allow deprecated special outbounds (dns) until we migrate rules fully
-  systemd.services."sing-box".environment = {
-    ENABLE_DEPRECATED_SPECIAL_OUTBOUNDS = "true";
-  };
-
-  # Force sing-box to load config from /etc/sing-box/config.json instead of Nix settings
-  systemd.services."sing-box".serviceConfig.ExecStart = pkgs.lib.mkForce [
-    ""
-    "${pkgs.sing-box}/bin/sing-box run -c /etc/sing-box/config.json"
-  ];
-
-  # Allow traffic via TUN interface
-  networking.firewall.trustedInterfaces = [ "tun0" ];
-
-  security.sudo.extraRules = [
-    {
-      groups = [ "wheel" ];
-      commands = [
-        {
-          command = "/run/current-system/sw/bin/nekoray";
-          options = [
-            "NOPASSWD"
-            "SETENV"
-          ];
-        }
-      ];
-    }
-  ];
+#  services.openvpn.servers = {
+#     officeVPN  = { 
+#       config = '' config /home/esc2/Downloads/vpn/vpn.conf ''; 
+#       updateResolvConf = true;
+#     };
+#   };
 
   #Define your networks here
   #Syntax :
