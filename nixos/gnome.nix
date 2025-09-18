@@ -1,7 +1,12 @@
 { pkgs, lib, ... }:
 {
   # System-level GNOME configuration
-  services.displayManager.gdm.enable = true;
+  services.displayManager.gdm = {
+    enable = true;
+    # Prevent automatic session restarts that cause double login
+    autoSuspend = false;
+    wayland = true;
+  };
   services.desktopManager.gnome.enable = true;
 
   environment.gnome.excludePackages = with pkgs; [
@@ -20,32 +25,31 @@
     wlroots
     # Language switching support
     ibus
-    # sxhkd  # Remove sxhkd as it's for Sway, not GNOME
-    # glib
-    # gtk3
-    # gtk4
-    # adwaita-icon-theme
-    # gnome-themes-extra
-    # gtk-engine-murrine
-    # gsettings-desktop-schemas
-    # gtk3.dev
-    # gtk4.dev
+    # File chooser and context menu support
+    xdg-desktop-portal-gtk
+    gtk3
+    gtk4
+    adwaita-icon-theme
+    gnome-themes-extra
+    gsettings-desktop-schemas
+    # Pomodoro timer
+    gnome-pomodoro
   ];
 
   # Internationalization configuration
-  i18n = {
-    defaultLocale = "en_US.UTF-8";
-    extraLocaleSettings = {
-      LC_TIME = "ru_RU.UTF-8";
-      LC_MONETARY = "ru_RU.UTF-8";
-      LC_PAPER = "ru_RU.UTF-8";
-      LC_MEASUREMENT = "ru_RU.UTF-8";
-    };
-    supportedLocales = [
-      "en_US.UTF-8/UTF-8"
-      "ru_RU.UTF-8/UTF-8"
-    ];
-  };
+  # i18n = {
+  #   defaultLocale = "en_US.UTF-8";
+  #   extraLocaleSettings = {
+  #     LC_TIME = "ru_RU.UTF-8";
+  #     LC_MONETARY = "ru_RU.UTF-8";
+  #     LC_PAPER = "ru_RU.UTF-8";
+  #     LC_MEASUREMENT = "ru_RU.UTF-8";
+  #   };
+  #   supportedLocales = [
+  #     "en_US.UTF-8/UTF-8"
+  #     "ru_RU.UTF-8/UTF-8"
+  #   ];
+  # };
   
   # Set timezone
   time.timeZone = "Europe/Moscow";
@@ -76,20 +80,30 @@
   programs.dconf.enable = true;
   services.dbus.packages = with pkgs; [ dconf ];
   
+  # XDG Desktop Portal configuration for file chooser and context menus
+  # xdg.portal = {
+  #   enable = true;
+  #   extraPortals = with pkgs; [
+  #     xdg-desktop-portal-gtk
+  #   ];
+  # };
+  
   # Enable input method framework for better language switching
-  i18n.inputMethod = {
-    type = "ibus";
-    enable = true;
-  };
+  # i18n.inputMethod = {
+  #   type = "ibus";
+  #   enable = true;
+  # };
   
   # Set default GTK theme to fix CSS import errors
   environment.variables = {
     GTK_THEME = "Adwaita:dark";
     QT_STYLE_OVERRIDE = "adwaita-dark";
+    # Fix GTK paths to avoid symlink issues
     GTK_DATA_PREFIX = "${pkgs.gtk3}";
     GTK_EXE_PREFIX = "${pkgs.gtk3}";
     GTK_PATH = "${pkgs.gtk3}";
-    XDG_DATA_DIRS = lib.mkForce "${pkgs.gtk3}/share:${pkgs.gtk4}/share:${pkgs.adwaita-icon-theme}/share:${pkgs.gnome-themes-extra}/share";
+    # Use proper XDG data directories with force override to avoid conflicts
+    # XDG_DATA_DIRS = lib.mkForce "${pkgs.gtk3}/share:${pkgs.gtk4}/share:${pkgs.adwaita-icon-theme}/share:${pkgs.gnome-themes-extra}/share";
     # XWayland environment variables
     GDK_BACKEND = "wayland,x11";
     QT_QPA_PLATFORM = "wayland;xcb";
@@ -99,6 +113,9 @@
     GTK_IM_MODULE = "ibus";
     QT_IM_MODULE = "ibus";
     XMODIFIERS = "@im=ibus";
+    # Additional variables for file chooser and context menus
+    # XDG_CURRENT_DESKTOP = "GNOME";
+    # XDG_SESSION_DESKTOP = "gnome";
   };
 
   # Enable internationalization support
@@ -212,6 +229,20 @@
         "org/gnome/shell/extensions/desktop-icons-ng" = {
           enable-animations = false;
         };
+
+        # File chooser settings to fix context menu issues
+        "org/gtk/settings/file-chooser" = {
+          show-hidden = true;
+          sort-directories-first = true;
+          sort-order = "type";
+        };
+
+        # GNOME file manager settings
+        "org/gnome/nautilus/preferences" = {
+          show-hidden-files = true;
+          default-folder-viewer = "list-view";
+          search-view = "list-view";
+        };
       };
 
       # GNOME input sources configuration
@@ -245,10 +276,14 @@
         Unit = {
           Description = "Setup input sources for GNOME";
           After = [ "graphical-session.target" ];
+          # Prevent conflicts by ensuring this only runs once
+          ConditionPathExists = "!/tmp/input-sources-setup-done";
         };
         Service = {
           Type = "oneshot";
           ExecStart = "/home/esc2/.scripts/setup-input-sources.sh";
+          # Mark as completed to prevent re-runs
+          ExecStartPost = "touch /tmp/input-sources-setup-done";
           RemainAfterExit = true;
         };
         Install = {
@@ -256,44 +291,19 @@
         };
       };
 
-      # Additional service that can be triggered manually after rebuilds
-      systemd.user.services.input-sources-rebuild = {
+      # Clean up marker file on logout to ensure proper setup on next login
+      systemd.user.services.input-sources-cleanup = {
         Unit = {
-          Description = "Setup input sources after NixOS rebuild";
-          After = [ "graphical-session.target" ];
+          Description = "Clean up input sources marker file on logout";
+          Before = [ "shutdown.target" ];
         };
         Service = {
           Type = "oneshot";
-          ExecStart = "/home/esc2/.scripts/setup-input-sources.sh";
+          ExecStart = "rm -f /tmp/input-sources-setup-done";
           RemainAfterExit = true;
         };
         Install = {
           WantedBy = [ "default.target" ];
-        };
-      };
-
-      # Timer to run input sources setup after systemd user reload
-      systemd.user.timers.input-sources-timer = {
-        Unit = {
-          Description = "Timer for input sources setup";
-        };
-        Timer = {
-          OnActiveSec = "5s";
-          Persistent = true;
-        };
-        Install = {
-          WantedBy = [ "timers.target" ];
-        };
-      };
-
-      # Service triggered by the timer
-      systemd.user.services.input-sources-timer = {
-        Unit = {
-          Description = "Setup input sources via timer";
-        };
-        Service = {
-          Type = "oneshot";
-          ExecStart = "/home/esc2/.scripts/setup-input-sources.sh";
         };
       };
 
