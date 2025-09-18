@@ -18,7 +18,6 @@
     #./config/theme.nix
     #./config/waybar.nix
   ];
-  nixpkgs.config.allowUnfree = true;
 
   home.packages = with pkgs; [
     git
