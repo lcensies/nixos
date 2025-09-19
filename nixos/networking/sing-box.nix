@@ -2,13 +2,31 @@
 {
   # Allow deprecated special outbounds (dns) until we migrate rules fully
   services.sing-box = {
-    enable = true;
+    enable = false;  # Disable the default service
   };
 
-  systemd.services.sing-box.serviceConfig = {
-    Environment = [
-      "ENABLE_DEPRECATED_SPECIAL_OUTBOUNDS=true"
-    ];
+  systemd.services.sing-box = {
+    enable = true;
+    description = "sing-box service";
+    documentation = [ "https://sing-box.sagernet.org" ];
+    after = [ "network.target" "nss-lookup.target" "network-online.target" ];
+    wants = [ "network-online.target" ];
+    
+    serviceConfig = {
+      Type = "simple";
+      User = "root";
+      Group = "root";
+      StateDirectory = "sing-box";
+      CapabilityBoundingSet = "CAP_NET_ADMIN CAP_NET_RAW CAP_NET_BIND_SERVICE CAP_SYS_PTRACE CAP_DAC_READ_SEARCH";
+      AmbientCapabilities = "CAP_NET_ADMIN CAP_NET_RAW CAP_NET_BIND_SERVICE CAP_SYS_PTRACE CAP_DAC_READ_SEARCH";
+      ExecStart = "${pkgs.sing-box}/bin/sing-box run -c /etc/sing-box/config.json";
+      ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
+      Restart = "on-failure";
+      RestartSec = "10s";
+      Environment = [
+        "ENABLE_DEPRECATED_SPECIAL_OUTBOUNDS=true"
+      ];
+    };
   };
 
   environment.variables = {
@@ -24,7 +42,7 @@
   # Force sing-box to load config from /etc/sing-box/config.json instead of Nix settings
 
   # Allow traffic via TUN interface
-  networking.firewall.trustedInterfaces = [ "tun0" ];
+  networking.firewall.trustedInterfaces = [ "tun10" ];
 
   security.sudo.extraRules = [
     {
