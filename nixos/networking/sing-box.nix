@@ -1,8 +1,14 @@
 { config, pkgs, ... }:
 {
+  # Allow deprecated special outbounds (dns) until we migrate rules fully
   services.sing-box = {
     enable = true;
-    settings = {};
+  };
+
+  systemd.services.sing-box.serviceConfig = {
+    Environment = [
+      "ENABLE_DEPRECATED_SPECIAL_OUTBOUNDS=true"
+    ];
   };
 
   environment.variables = {
@@ -14,16 +20,8 @@
     NO_PROXY = "127.0.0.1,localhost,.local,.lan";
   };
 
-  # Allow deprecated special outbounds (dns) until we migrate rules fully
-  systemd.services."sing-box".environment = {
-    ENABLE_DEPRECATED_SPECIAL_OUTBOUNDS = "true";
-  };
 
   # Force sing-box to load config from /etc/sing-box/config.json instead of Nix settings
-  systemd.services."sing-box".serviceConfig.ExecStart = pkgs.lib.mkForce [
-    ""
-    "${pkgs.sing-box}/bin/sing-box run -c /etc/sing-box/config.json"
-  ];
 
   # Allow traffic via TUN interface
   networking.firewall.trustedInterfaces = [ "tun0" ];
