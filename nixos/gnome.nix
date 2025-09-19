@@ -243,6 +243,12 @@
           default-folder-viewer = "list-view";
           search-view = "list-view";
         };
+
+        # Mouse settings - preserve current settings with flat acceleration
+        "org/gnome/desktop/peripherals/mouse" = {
+          accel-profile = "flat";
+          # speed = -0.23529411764705888;
+        };
       };
 
       # GNOME input sources configuration
