@@ -29,6 +29,7 @@
     vscode
     #Browser
     firefox
+    tor-browser
     # Second firefox
     librewolf
     # For compatibility
@@ -84,6 +85,8 @@
 
     # Diagrams
     drawio
+
+    anytype
   ];
 
   programs.direnv = {

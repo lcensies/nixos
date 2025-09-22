@@ -27,6 +27,7 @@
     ibus
     # File chooser and context menu support
     xdg-desktop-portal-gtk
+    # xdg-desktop-portal-gnome
     gtk3
     gtk4
     adwaita-icon-theme
@@ -86,6 +87,46 @@
   #   extraPortals = with pkgs; [
   #     xdg-desktop-portal-gtk
   #   ];
+  #   # Explicitly exclude GNOME portal to prevent conflicts
+  #   config = {
+  #     common = {
+  #       default = "gtk";
+  #       "org.freedesktop.impl.portal.FileChooser" = "gtk";
+  #       "org.freedesktop.impl.portal.AppChooser" = "gtk";
+  #       "org.freedesktop.impl.portal.Print" = "gtk";
+  #       "org.freedesktop.impl.portal.Notification" = "gtk";
+  #       "org.freedesktop.impl.portal.Screenshot" = "gtk";
+  #       "org.freedesktop.impl.portal.Wallpaper" = "gtk";
+  #       "org.freedesktop.impl.portal.ScreenCast" = "gtk";
+  #       "org.freedesktop.impl.portal.RemoteDesktop" = "gtk";
+  #       "org.freedesktop.impl.portal.Background" = "gtk";
+  #       "org.freedesktop.impl.portal.Session" = "gtk";
+  #       "org.freedesktop.impl.portal.Account" = "gtk";
+  #       "org.freedesktop.impl.portal.Email" = "gtk";
+  #       "org.freedesktop.impl.portal.GameMode" = "gtk";
+  #       "org.freedesktop.impl.portal.Lockdown" = "gtk";
+  #       "org.freedesktop.impl.portal.Inhibit" = "gtk";
+  #       "org.freedesktop.impl.portal.Device" = "gtk";
+  #       "org.freedesktop.impl.portal.Location" = "gtk";
+  #       "org.freedesktop.impl.portal.NetworkMonitor" = "gtk";
+  #       "org.freedesktop.impl.portal.Trash" = "gtk";
+  #       "org.freedesktop.impl.portal.DynamicLauncher" = "gtk";
+  #       "org.freedesktop.impl.portal.GlobalShortcuts" = "gtk";
+  #       "org.freedesktop.impl.portal.PowerProfileMonitor" = "gtk";
+  #       "org.freedesktop.impl.portal.ProxyResolver" = "gtk";
+  #       "org.freedesktop.impl.portal.Portal" = "gtk";
+  #       "org.freedesktop.impl.portal.Secret" = "gtk";
+  #       "org.freedesktop.impl.portal.Status" = "gtk";
+  #       "org.freedesktop.impl.portal.URI" = "gtk";
+  #       "org.freedesktop.impl.portal.UserInfo" = "gtk";
+  #       "org.freedesktop.impl.portal.Wayland" = "gtk";
+  #       "org.freedesktop.impl.portal.Access" = "gtk";
+  #       "org.freedesktop.impl.portal.Settings" = "gtk";
+  #       "org.freedesktop.impl.portal.Clipboard" = "gtk";
+  #       "org.freedesktop.impl.portal.InputCapture" = "gtk";
+  #       "org.freedesktop.impl.portal.Usb" = "gtk";
+  #     };
+  #   };
   # };
   
   # Enable input method framework for better language switching
@@ -109,13 +150,17 @@
     QT_QPA_PLATFORM = "wayland;xcb";
     MOZ_ENABLE_WAYLAND = "1";
     NIXOS_OZONE_WL = "1";
-    # IBus environment variables
-    GTK_IM_MODULE = "ibus";
-    QT_IM_MODULE = "ibus";
-    XMODIFIERS = "@im=ibus";
-    # Additional variables for file chooser and context menus
+    # Additional variables for proper portal support
     # XDG_CURRENT_DESKTOP = "GNOME";
     # XDG_SESSION_DESKTOP = "gnome";
+    # XDG_SESSION_TYPE = "wayland";
+    # Fix for missing FileChooser interface - set XDG_DESKTOP_PORTAL_DIR explicitly
+    # XDG_DESKTOP_PORTAL_DIR = "/run/current-system/sw/share/xdg-desktop-portal/portals";
+    # IBus environment variables
+    # GTK_IM_MODULE = "ibus";
+    # QT_IM_MODULE = "ibus";
+    # XMODIFIERS = "@im=ibus";
+    # Additional variables for file chooser and context menus
   };
 
   # Enable internationalization support
@@ -231,18 +276,18 @@
         };
 
         # File chooser settings to fix context menu issues
-        "org/gtk/settings/file-chooser" = {
-          show-hidden = true;
-          sort-directories-first = true;
-          sort-order = "type";
-        };
+        # "org/gtk/settings/file-chooser" = {
+        #   show-hidden = true;
+        #   sort-directories-first = true;
+        #   sort-order = "type";
+        # };
 
         # GNOME file manager settings
-        "org/gnome/nautilus/preferences" = {
-          show-hidden-files = true;
-          default-folder-viewer = "list-view";
-          search-view = "list-view";
-        };
+        # "org/gnome/nautilus/preferences" = {
+        #   show-hidden-files = true;
+        #   default-folder-viewer = "list-view";
+        #   search-view = "list-view";
+        # };
 
         # Mouse settings - preserve current settings with flat acceleration
         "org/gnome/desktop/peripherals/mouse" = {
@@ -340,6 +385,7 @@
       #     RemainAfterExit = true;
       #   };
       # };
+
 
     };
 }
