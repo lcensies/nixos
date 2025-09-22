@@ -258,6 +258,9 @@
           # Close window shortcut (Shift + Windows + Q)
           close = [ "<Shift><Super>q" ];
 
+          # Activate window menu shortcut (Shift + Windows + M)
+          activate-window-menu = [ "<Shift><Super>m" ];
+
           # Remove conflicting default shortcuts
           switch-to-workspace-left = [ ];
           switch-to-workspace-right = [ ];
