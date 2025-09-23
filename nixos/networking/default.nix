@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 {
   # Import sing-box configuration
-  imports = [ ./sing-box.nix ];
+  # imports = [ ./sing-box.nix ];
 
   boot.kernelModules = [ "tun" ];
   networking.hostName = "stable";
@@ -27,14 +27,23 @@
     # WIFI tui
     impala
 
+    # dig
+
+    
     openconnect
     openvpn
-    nekoray
+    # Well, nekoray is broken as always
+    # nekoray
     # v2raya currently not used
 
-    # NetworkManager VPN support
-    networkmanager-openvpn
+    # NetworkManager VPN support. 
+    # Doesn't fckin work
+    # networkmanager-openvpn
   ];
+
+  # services.resolved.enable = true;
+  # programs.nekoray.tunMode.enable = true;
+
 
   # services.v2raya.enable = true; currently not used
 

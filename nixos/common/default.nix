@@ -87,7 +87,6 @@ in
     lazygit
     just
     tmuxinator
-    nekoray
     zoxide
     atuin
     impala
@@ -102,18 +101,20 @@ in
     openssl
     # C/C++
     gcc
+    clang
     llvmPackages_latest.llvm
+    # Common debugger
+    lldb
     # Python
     poetry
     uv
     # Rust
     cargo
     rustc
-
   ];
 
-  services.resolved.enable = true;
-  programs.nekoray.tunMode.enable = true;
+  # services.resolved.enable = true;
+  # programs.nekoray.tunMode.enable = true;
   #programs.mtr.enable = true;
   #programs.gnupg.agent = {
   #  enable = true;
