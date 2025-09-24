@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 {
   # Import sing-box configuration
-  # imports = [ ./sing-box.nix ];
+  imports = [ ./sing-box.nix ];
 
   boot.kernelModules = [ "tun" ];
   networking.hostName = "stable";
@@ -41,7 +41,8 @@
     # networkmanager-openvpn
   ];
 
-  # services.resolved.enable = true;
+  # Also might be required to use with sing-box
+  services.resolved.enable = true;
   # programs.nekoray.tunMode.enable = true;
 
 
