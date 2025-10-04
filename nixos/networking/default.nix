@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 {
   # Import sing-box configuration
-  imports = [ ./sing-box.nix ];
+  # imports = [ ./sing-box.nix ];
 
   boot.kernelModules = [ "tun" ];
   networking.hostName = "stable";
@@ -12,9 +12,9 @@
   networking.wireless.userControlled.enable = true;
 
   # Enable NetworkManager for VPN support
-  networking.networkmanager.enable = true;
-  networking.networkmanager.wifi.backend = "iwd";
-  networking.wireless.iwd.enable = true;
+  # networking.networkmanager.enable = true;
+  # networking.networkmanager.wifi.backend = "iwd";
+  # networking.wireless.iwd.enable = true;
 
   #networking.firewall.enable = false;
   #networking.firewall.allowedUDPPorts = [...];
@@ -27,7 +27,7 @@
     # WIFI tui
     impala
 
-    # dig
+    dig
 
     
     openconnect

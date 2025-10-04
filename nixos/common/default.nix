@@ -71,6 +71,7 @@ in
     freshfetch
     git
     nodejs_24
+    yazi
     rcm
     gnumake
     go
@@ -111,7 +112,12 @@ in
     # Rust
     cargo
     rustc
+
+    devcontainer
   ];
+  
+  # MTP MOUNT
+  services.gvfs.enable = true;
 
   # services.resolved.enable = true;
   # programs.nekoray.tunMode.enable = true;

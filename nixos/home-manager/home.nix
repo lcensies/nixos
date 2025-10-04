@@ -87,6 +87,8 @@
     drawio
 
     anytype
+
+    deluge
   ];
 
   programs.direnv = {
