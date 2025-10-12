@@ -24,15 +24,15 @@
     gnome-tweaks
     wlroots
     # Language switching support
-    ibus
+    # ibus
     # File chooser and context menu support
-    xdg-desktop-portal-gtk
-    # xdg-desktop-portal-gnome
-    gtk3
-    gtk4
+    # xdg-desktop-portal-gtk  # Not needed - using GNOME portal only
+    # xdg-desktop-portal-gnome  # Handled by xdg.portal.extraPortals
+    # gtk3
+    # gtk4
     adwaita-icon-theme
-    gnome-themes-extra
-    gsettings-desktop-schemas
+    # gnome-themes-extra
+    # gsettings-desktop-schemas
     # Pomodoro timer
     gnome-pomodoro
   ];
@@ -82,52 +82,54 @@
   services.dbus.packages = with pkgs; [ dconf ];
   
   # XDG Desktop Portal configuration for file chooser and context menus
-  # xdg.portal = {
-  #   enable = true;
-  #   extraPortals = with pkgs; [
-  #     xdg-desktop-portal-gtk
-  #   ];
-  #   # Explicitly exclude GNOME portal to prevent conflicts
-  #   config = {
-  #     common = {
-  #       default = "gtk";
-  #       "org.freedesktop.impl.portal.FileChooser" = "gtk";
-  #       "org.freedesktop.impl.portal.AppChooser" = "gtk";
-  #       "org.freedesktop.impl.portal.Print" = "gtk";
-  #       "org.freedesktop.impl.portal.Notification" = "gtk";
-  #       "org.freedesktop.impl.portal.Screenshot" = "gtk";
-  #       "org.freedesktop.impl.portal.Wallpaper" = "gtk";
-  #       "org.freedesktop.impl.portal.ScreenCast" = "gtk";
-  #       "org.freedesktop.impl.portal.RemoteDesktop" = "gtk";
-  #       "org.freedesktop.impl.portal.Background" = "gtk";
-  #       "org.freedesktop.impl.portal.Session" = "gtk";
-  #       "org.freedesktop.impl.portal.Account" = "gtk";
-  #       "org.freedesktop.impl.portal.Email" = "gtk";
-  #       "org.freedesktop.impl.portal.GameMode" = "gtk";
-  #       "org.freedesktop.impl.portal.Lockdown" = "gtk";
-  #       "org.freedesktop.impl.portal.Inhibit" = "gtk";
-  #       "org.freedesktop.impl.portal.Device" = "gtk";
-  #       "org.freedesktop.impl.portal.Location" = "gtk";
-  #       "org.freedesktop.impl.portal.NetworkMonitor" = "gtk";
-  #       "org.freedesktop.impl.portal.Trash" = "gtk";
-  #       "org.freedesktop.impl.portal.DynamicLauncher" = "gtk";
-  #       "org.freedesktop.impl.portal.GlobalShortcuts" = "gtk";
-  #       "org.freedesktop.impl.portal.PowerProfileMonitor" = "gtk";
-  #       "org.freedesktop.impl.portal.ProxyResolver" = "gtk";
-  #       "org.freedesktop.impl.portal.Portal" = "gtk";
-  #       "org.freedesktop.impl.portal.Secret" = "gtk";
-  #       "org.freedesktop.impl.portal.Status" = "gtk";
-  #       "org.freedesktop.impl.portal.URI" = "gtk";
-  #       "org.freedesktop.impl.portal.UserInfo" = "gtk";
-  #       "org.freedesktop.impl.portal.Wayland" = "gtk";
-  #       "org.freedesktop.impl.portal.Access" = "gtk";
-  #       "org.freedesktop.impl.portal.Settings" = "gtk";
-  #       "org.freedesktop.impl.portal.Clipboard" = "gtk";
-  #       "org.freedesktop.impl.portal.InputCapture" = "gtk";
-  #       "org.freedesktop.impl.portal.Usb" = "gtk";
-  #     };
-  #   };
-  # };
+  xdg.portal = {
+    enable = true;
+    # Use both GTK and GNOME portals - GTK for file chooser, GNOME for other features
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-gnome
+    ];
+    # Configure portal to use GTK for file chooser (more reliable) and GNOME for other features
+    config = {
+      common = {
+        default = "gtk";
+        "org.freedesktop.impl.portal.FileChooser" = "gtk";
+        "org.freedesktop.impl.portal.AppChooser" = "gtk";
+        "org.freedesktop.impl.portal.Print" = "gtk";
+        "org.freedesktop.impl.portal.Notification" = "gnome";
+        "org.freedesktop.impl.portal.Screenshot" = "gnome";
+        "org.freedesktop.impl.portal.Wallpaper" = "gnome";
+        "org.freedesktop.impl.portal.ScreenCast" = "gnome";
+        "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
+        "org.freedesktop.impl.portal.Background" = "gnome";
+        "org.freedesktop.impl.portal.Session" = "gnome";
+        "org.freedesktop.impl.portal.Account" = "gnome";
+        "org.freedesktop.impl.portal.Email" = "gtk";
+        "org.freedesktop.impl.portal.GameMode" = "gnome";
+        "org.freedesktop.impl.portal.Lockdown" = "gnome";
+        "org.freedesktop.impl.portal.Inhibit" = "gtk";
+        "org.freedesktop.impl.portal.Device" = "gnome";
+        "org.freedesktop.impl.portal.Location" = "gnome";
+        "org.freedesktop.impl.portal.NetworkMonitor" = "gnome";
+        "org.freedesktop.impl.portal.Trash" = "gnome";
+        "org.freedesktop.impl.portal.DynamicLauncher" = "gnome";
+        "org.freedesktop.impl.portal.GlobalShortcuts" = "gnome";
+        "org.freedesktop.impl.portal.PowerProfileMonitor" = "gnome";
+        "org.freedesktop.impl.portal.ProxyResolver" = "gnome";
+        "org.freedesktop.impl.portal.Portal" = "gnome";
+        "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
+        "org.freedesktop.impl.portal.Status" = "gnome";
+        "org.freedesktop.impl.portal.URI" = "gnome";
+        "org.freedesktop.impl.portal.UserInfo" = "gnome";
+        "org.freedesktop.impl.portal.Wayland" = "gnome";
+        "org.freedesktop.impl.portal.Access" = "gnome";
+        "org.freedesktop.impl.portal.Settings" = "gnome";
+        "org.freedesktop.impl.portal.Clipboard" = "gnome";
+        "org.freedesktop.impl.portal.InputCapture" = "gnome";
+        "org.freedesktop.impl.portal.Usb" = "gnome";
+      };
+    };
+  };
   
   # Enable input method framework for better language switching
   # i18n.inputMethod = {
@@ -140,22 +142,22 @@
     GTK_THEME = "Adwaita:dark";
     QT_STYLE_OVERRIDE = "adwaita-dark";
     # Fix GTK paths to avoid symlink issues
-    GTK_DATA_PREFIX = "${pkgs.gtk3}";
-    GTK_EXE_PREFIX = "${pkgs.gtk3}";
-    GTK_PATH = "${pkgs.gtk3}";
+    # GTK_DATA_PREFIX = "${pkgs.gtk3}";
+    # GTK_EXE_PREFIX = "${pkgs.gtk3}";
+    # GTK_PATH = "${pkgs.gtk3}";
+    # GDK_BACKEND = "wayland,x11";
+    # QT_QPA_PLATFORM = "wayland;xcb";
+    MOZ_ENABLE_WAYLAND = "1";
+    NIXOS_OZONE_WL = "1";
     # Use proper XDG data directories with force override to avoid conflicts
     # XDG_DATA_DIRS = lib.mkForce "${pkgs.gtk3}/share:${pkgs.gtk4}/share:${pkgs.adwaita-icon-theme}/share:${pkgs.gnome-themes-extra}/share";
     # XWayland environment variables
-    GDK_BACKEND = "wayland,x11";
-    QT_QPA_PLATFORM = "wayland;xcb";
-    MOZ_ENABLE_WAYLAND = "1";
-    NIXOS_OZONE_WL = "1";
     # Additional variables for proper portal support
     # XDG_CURRENT_DESKTOP = "GNOME";
     # XDG_SESSION_DESKTOP = "gnome";
     # XDG_SESSION_TYPE = "wayland";
     # Fix for missing FileChooser interface - set XDG_DESKTOP_PORTAL_DIR explicitly
-    # XDG_DESKTOP_PORTAL_DIR = "/run/current-system/sw/share/xdg-desktop-portal/portals";
+    XDG_DESKTOP_PORTAL_DIR = "/run/current-system/sw/share/xdg-desktop-portal/portals";
     # IBus environment variables
     # GTK_IM_MODULE = "ibus";
     # QT_IM_MODULE = "ibus";
@@ -362,32 +364,6 @@
       };
 
 
-      # Fix GTK theme CSS import errors
-      # dconf.settings."org/gnome/desktop/interface" = {
-      #   gtk-theme = lib.mkForce "Adwaita-dark";
-      #   icon-theme = lib.mkForce "Adwaita";
-      #   cursor-theme = lib.mkForce "Adwaita";
-      #   enable-animations = false;
-      # };
-
-      # # Additional GTK settings
-      # dconf.settings."org/gnome/desktop/wm/preferences" = {
-      #   theme = "Adwaita";
-      # };
-
-      # # Systemd service to fix GTK CSS resource issues
-      # systemd.user.services.gtk-css-fix = {
-      #   Unit = {
-      #     Description = "Fix GTK CSS resource issues";
-      #     WantedBy = [ "graphical-session.target" ];
-      #     After = [ "graphical-session.target" ];
-      #   };
-      #   Service = {
-      #     Type = "oneshot";
-      #     ExecStart = "/run/current-system/sw/bin/bash -c 'mkdir -p ~/.local/share/themes/Adwaita-dark/gtk-3.0 && cp ${pkgs.gtk3}/share/themes/Adwaita-dark/gtk-3.0/gtk.css ~/.local/share/themes/Adwaita-dark/gtk-3.0/ && export GTK_DATA_PREFIX=${pkgs.gtk3} && export GTK_EXE_PREFIX=${pkgs.gtk3} && export GTK_PATH=${pkgs.gtk3} && /run/current-system/sw/bin/gsettings set org.gnome.desktop.interface gtk-theme \"Adwaita-dark\" && /run/current-system/sw/bin/gsettings set org.gnome.desktop.interface icon-theme \"Adwaita\" && /run/current-system/sw/bin/gsettings set org.gnome.desktop.interface cursor-theme \"Adwaita\"'";
-      #     RemainAfterExit = true;
-      #   };
-      # };
 
 
     };
