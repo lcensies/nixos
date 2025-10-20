@@ -12,7 +12,7 @@
     spice-gtk
     # qemu_kvm
     spice-protocol
-    win-virtio
+    # win-virtio
     win-spice
 
     vagrant
