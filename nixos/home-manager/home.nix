@@ -85,10 +85,9 @@
 
     # Diagrams
     drawio
-
     anytype
-
     deluge
+    obs-studio
   ];
 
   programs.direnv = {
