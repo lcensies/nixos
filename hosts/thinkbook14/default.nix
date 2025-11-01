@@ -1,7 +1,7 @@
 { inputs, ... }:
 {
   imports = [
-    ../../nixos/default-vm.nix
+    ../../nixos/default.nix
     inputs.disko.nixosModules.disko
     ./hardware-configuration-thinkbook14.nix
     ./hardware-optimizations.nix

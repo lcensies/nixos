@@ -18,6 +18,17 @@ in
     };
   };
 
+  # Overlay to fix fcitx5-with-addons: it has been moved from libsForQt5 to qt6Packages
+  nixpkgs.overlays = [
+    (final: prev: {
+      libsForQt5 = prev.libsForQt5.overrideScope (final': prev': {
+        fcitx5-with-addons = prev.qt6Packages.fcitx5-with-addons;
+      });
+      # Also provide it at the top level for backward compatibility
+      fcitx5-with-addons = prev.qt6Packages.fcitx5-with-addons;
+    })
+  ];
+
   time.timeZone = "Europe/Moscow";
 
   # Enable internationalization support
@@ -95,8 +106,9 @@ in
     nixfmt
     lsof
     libisoburn
+    flatpak
     
-
+    unzip
   
     # Additional development packages
     openssl
@@ -114,6 +126,13 @@ in
     rustc
 
     devcontainer
+    waypipe
+    ffmpeg
+    
+    # LaTeX support
+    texlive.combined.scheme-full
+
+    #wireshark
   ];
   
   # MTP MOUNT

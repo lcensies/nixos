@@ -10,11 +10,11 @@
   services.desktopManager.gnome.enable = true;
 
   environment.gnome.excludePackages = with pkgs; [
-    gnome-music
+    # gnome-music
     gnome-tour
-    cheese
-    epiphany
-    geary
+    # cheese
+    # epiphany
+    # geary
     totem
   ];
 
@@ -35,6 +35,8 @@
     # gsettings-desktop-schemas
     # Pomodoro timer
     gnome-pomodoro
+    # Tiling window manager
+    gnomeExtensions.forge
   ];
 
   # Internationalization configuration
@@ -219,6 +221,7 @@
         extensions = [
           #{ package = pkgs.gnomeExtensions.tiling-shell; }
           { package = pkgs.gnomeExtensions.search-light; }
+          { package = pkgs.gnomeExtensions.forge; }
         ];
       };
 
@@ -263,6 +266,9 @@
           # Activate window menu shortcut (Shift + Windows + M)
           activate-window-menu = [ "<Shift><Super>m" ];
 
+          # Disable Win+H shortcut for hiding window
+          hide-window = [ ];
+
           # Remove conflicting default shortcuts
           switch-to-workspace-left = [ ];
           switch-to-workspace-right = [ ];
@@ -299,6 +305,19 @@
           accel-profile = "flat";
           # speed = -0.23529411764705888;
         };
+
+        # Custom keybindings for GNOME
+        "org/gnome/settings-daemon/plugins/media-keys" = {
+          custom-keybindings = [
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+          ];
+        };
+
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+          name = "Launch Terminal";
+          command = "kitty";
+          binding = "<Ctrl><Alt>Return";
+        };
       };
 
       # GNOME input sources configuration
@@ -320,10 +339,33 @@
       };
 
       # Additional settings to ensure language indicator appears
+      # Note: Forge is disabled by default to prevent session crashes after reboot
       dconf.settings."org/gnome/shell" = {
         enabled-extensions = [
           "searchlight@icedman.github.com"
+          # "forge@jmmaranan.com"  # Disabled by default to prevent crashes
         ];
+      };
+
+      # Forge tiling window manager configuration
+      # Note: Forge is disabled by default due to session crash issues after reboot
+      # Enable manually via: gsettings set org.gnome.shell enabled-extensions "['searchlight@icedman.github.com', 'forge@jmmaranan.com']"
+      dconf.settings."org/gnome/shell/extensions/forge" = {
+        # Disable Forge by default to prevent session crashes
+        # enabled = true;
+        # Basic tiling settings (will be applied when manually enabled)
+        auto-split = true;
+        smart-gaps = true;
+        # focus-hint = true;
+        # Window management
+        floating-windows = true;
+        # Layout settings
+        stacked-layout = false;
+        tabbed-layout = false;
+        # Launch new windows in fullscreen by default
+        new-window-behavior = "fullscreen";
+        # Disable gaps for single windows
+        gaps-when-only = false;
       };
 
       # Systemd service to ensure input sources are properly configured after login

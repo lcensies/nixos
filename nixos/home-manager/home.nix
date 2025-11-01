@@ -63,7 +63,7 @@
 
     #Messaging app
     # signal-desktop
-    # telegram-desktop fuck telegram, don't need it anymore
+    telegram-desktop 
 
     #Office suite
     libreoffice
@@ -88,6 +88,8 @@
     anytype
     deluge
     obs-studio
+
+    zoom
   ];
 
   programs.direnv = {

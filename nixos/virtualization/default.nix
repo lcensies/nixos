@@ -17,6 +17,9 @@
 
     vagrant
     packer
+
+    nemu
+    realvnc-vnc-viewer
   ];
 
   virtualisation = {
@@ -24,8 +27,9 @@
       enable = true;
       qemu = {
         swtpm.enable = true;
-        ovmf.enable = true;
-        ovmf.packages = [ pkgs.OVMFFull.fd ];
+        # Now available by default
+        #ovmf.enable = true;
+        #ovmf.packages = [ pkgs.OVMFFull.fd ];
       };
     };
     spiceUSBRedirection.enable = true;

@@ -18,8 +18,10 @@
     nur.url = "github:nix-community/NUR";
     nur.inputs.nixpkgs.follows = "nixpkgs";
 
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
+
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.6.0";
 
   };
 
@@ -42,7 +44,7 @@
     {
       #packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
-      overlays = import ./overlays { inherit inputs; };
+      # overlays = import ./overlays { inherit inputs; };
       # nixosModules = import ./modules/nixos;
 
       nixosConfigurations =
@@ -66,6 +68,7 @@
             inherit specialArgs;
             system = "x86_64-linux";
             modules = [
+              inputs.nix-flatpak.nixosModules.nix-flatpak
               ./hosts/thinkbook14
               ./nixos/home-manager # Fixed fcitx5 issue with package override
             ];
