@@ -21,6 +21,7 @@
 
   home.packages = with pkgs; [
     git
+    git-lfs
     rcm
     python3
     just

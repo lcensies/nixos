@@ -81,6 +81,7 @@ in
     tmux
     freshfetch
     git
+    git-lfs
     nodejs_24
     yazi
     rcm
@@ -132,6 +133,10 @@ in
     # LaTeX support
     texlive.combined.scheme-full
 
+    awscli2
+
+    # rust-rover
+#
     #wireshark
   ];
   
