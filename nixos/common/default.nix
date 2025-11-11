@@ -135,6 +135,9 @@ in
 
     awscli2
 
+    # Linux kernel headers
+    config.boot.kernelPackages.kernel.dev
+
     # rust-rover
 #
     #wireshark

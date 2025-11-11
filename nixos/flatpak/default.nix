@@ -27,6 +27,8 @@
     { appId = "us.zoom.Zoom";  origin = "flathub"; }
     { appId = "com.valvesoftware.Steam"; origin = "flathub"; }
     { appId = "com.valvesoftware.Steam.CompatibilityTool.Proton"; origin = "flathub"; }
+    { appId = "com.jetbrains.RustRover"; origin = "flathub"; }
+    { appId = "net.lutris.Lutris"; origin = "flathub"; }
     #"im.riot.Riot"
   ];
 }
