@@ -6,7 +6,8 @@
   environment.systemPackages = with pkgs; [
     virt-manager
     virt-viewer
-    # libguestfs
+    virtiofsd
+    libguestfs
     libguestfs-with-appliance
     spice
     spice-gtk
@@ -31,6 +32,7 @@
         #ovmf.enable = true;
         #ovmf.packages = [ pkgs.OVMFFull.fd ];
       };
+      qemu.vhostUserPackages = with pkgs; [ virtiofsd ];
     };
     spiceUSBRedirection.enable = true;
   };

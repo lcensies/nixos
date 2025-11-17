@@ -141,6 +141,8 @@ in
     # rust-rover
 #
     #wireshark
+
+    qrencode # qr generator
   ];
   
   # MTP MOUNT

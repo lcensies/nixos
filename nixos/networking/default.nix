@@ -1,7 +1,10 @@
 { config, pkgs, ... }:
 {
   # Import sing-box configuration
-  imports = [ ./sing-box.nix ];
+  imports = [
+    ./sing-box.nix
+    ./mullvad.nix
+  ];
 
   boot.kernelModules = [ "tun" ];
   networking.hostName = "stable";

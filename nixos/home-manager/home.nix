@@ -91,6 +91,8 @@
     obs-studio
 
     zoom
+
+    foliate
   ];
 
   programs.direnv = {
