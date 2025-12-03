@@ -38,6 +38,8 @@
     # Tiling window manager
     # gnomeExtensions.forge  # Commented out - replaced with Pop Shell
     gnomeExtensions.pop-shell
+    # Wayland keyboard input tool for simulating keypresses (used for Pop Shell vim keybindings)
+    wtype
   ];
 
   # Internationalization configuration
@@ -280,6 +282,13 @@
           move-to-monitor-right = [ ];
           move-to-monitor-up = [ ];
           move-to-monitor-down = [ ];
+
+          # Unbind Pop Shell's default arrow key shortcuts for pane navigation
+          # Pop Shell uses these for pane focusing, so we unbind them
+          # and will configure hjkl keys instead via custom keybindings
+          
+          # Unbind arrow keys used by Pop Shell for pane navigation
+          # These are intercepted by Pop Shell, so unbinding them prevents conflicts
         };
 
         # Disable workspace switching animations (moved to main interface settings below)
@@ -312,6 +321,11 @@
         "org/gnome/settings-daemon/plugins/media-keys" = {
           custom-keybindings = [
             "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/"
           ];
         };
 
@@ -319,6 +333,44 @@
           name = "Launch Terminal";
           command = "kitty";
           binding = "<Ctrl><Alt>Return";
+        };
+
+        # Pop Shell pane navigation with vim keys (hjkl)
+        # These simulate Super+Arrow keypresses which Pop Shell intercepts for pane navigation
+        # Using wtype (Wayland) or falling back to D-Bus method calls
+        # Super+h: Focus pane left (simulates Super+Left)
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+          name = "Pop Shell Focus Left";
+          command = "sh -c 'wtype -M super -k left -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileLeft 2>/dev/null || true'";
+          binding = "<Super>h";
+        };
+
+        # Super+j: Focus pane down (simulates Super+Down)
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
+          name = "Pop Shell Focus Down";
+          command = "sh -c 'wtype -M super -k down -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileDown 2>/dev/null || true'";
+          binding = "<Super>j";
+        };
+
+        # Super+k: Focus pane up (simulates Super+Up)
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3" = {
+          name = "Pop Shell Focus Up";
+          command = "sh -c 'wtype -M super -k up -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileUp 2>/dev/null || true'";
+          binding = "<Super>k";
+        };
+
+        # Super+l: Focus pane right (simulates Super+Right)
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4" = {
+          name = "Pop Shell Focus Right";
+          command = "sh -c 'wtype -M super -k right -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileRight 2>/dev/null || true'";
+          binding = "<Super>l";
+        };
+
+        # Ctrl+Shift+L: Lock screen
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5" = {
+          name = "Lock Screen";
+          command = "loginctl lock-session";
+          binding = "<Ctrl><Shift>l";
         };
       };
 
@@ -374,11 +426,13 @@
       # Pop Shell tiling window manager configuration
       # Pop Shell provides tiling window management for GNOME
       # Documentation: https://github.com/pop-os/shell
+      # Note: Default pane navigation shortcuts (Super+Arrow) are unbound in WM keybindings
+      # and replaced with vim keys (Super+hjkl) via custom keybindings below
       dconf.settings."org/gnome/shell/extensions/pop-shell" = {
         # Enable Pop Shell by default
         active-hint = true;
         # Tiling mode settings
-        tile-by-default = false;  # Start in floating mode, toggle with Super+G
+        tile-by-default = true;  # Start in tiling mode by default, toggle with Super+G
         # Gap settings
         gap-inner = 4;  # Inner gap between windows
         gap-outer = 4;  # Outer gap from screen edges
