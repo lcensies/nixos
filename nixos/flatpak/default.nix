@@ -25,8 +25,9 @@
     #{ appId = "com.brave.Browser"; origin = "flathub"; }
     { appId = "com.obsproject.Studio"; origin = "flathub"; }
     { appId = "us.zoom.Zoom";  origin = "flathub"; }
-    { appId = "com.valvesoftware.Steam"; origin = "flathub"; }
-    { appId = "com.valvesoftware.Steam.CompatibilityTool.Proton"; origin = "flathub"; }
+    # Lutris is used instead
+    # { appId = "com.valvesoftware.Steam"; origin = "flathub"; }
+    # { appId = "com.valvesoftware.Steam.CompatibilityTool.Proton"; origin = "flathub"; }
     { appId = "com.jetbrains.RustRover"; origin = "flathub"; }
     { appId = "net.lutris.Lutris"; origin = "flathub"; }
     #"im.riot.Riot"
