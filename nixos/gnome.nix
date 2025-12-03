@@ -10,11 +10,11 @@
   services.desktopManager.gnome.enable = true;
 
   environment.gnome.excludePackages = with pkgs; [
-    gnome-music
+    # gnome-music
     gnome-tour
-    cheese
-    epiphany
-    geary
+    # cheese
+    # epiphany
+    # geary
     totem
   ];
 
@@ -24,16 +24,22 @@
     gnome-tweaks
     wlroots
     # Language switching support
-    ibus
+    # ibus
     # File chooser and context menu support
-    xdg-desktop-portal-gtk
-    gtk3
-    gtk4
+    # xdg-desktop-portal-gtk  # Not needed - using GNOME portal only
+    # xdg-desktop-portal-gnome  # Handled by xdg.portal.extraPortals
+    # gtk3
+    # gtk4
     adwaita-icon-theme
-    gnome-themes-extra
-    gsettings-desktop-schemas
+    # gnome-themes-extra
+    # gsettings-desktop-schemas
     # Pomodoro timer
     gnome-pomodoro
+    # Tiling window manager
+    # gnomeExtensions.forge  # Commented out - replaced with Pop Shell
+    gnomeExtensions.pop-shell
+    # Wayland keyboard input tool for simulating keypresses (used for Pop Shell vim keybindings)
+    wtype
   ];
 
   # Internationalization configuration
@@ -81,12 +87,54 @@
   services.dbus.packages = with pkgs; [ dconf ];
   
   # XDG Desktop Portal configuration for file chooser and context menus
-  # xdg.portal = {
-  #   enable = true;
-  #   extraPortals = with pkgs; [
-  #     xdg-desktop-portal-gtk
-  #   ];
-  # };
+  xdg.portal = {
+    enable = true;
+    # Use both GTK and GNOME portals - GTK for file chooser, GNOME for other features
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-gnome
+    ];
+    # Configure portal to use GTK for file chooser (more reliable) and GNOME for other features
+    config = {
+      common = {
+        default = "gtk";
+        "org.freedesktop.impl.portal.FileChooser" = "gtk";
+        "org.freedesktop.impl.portal.AppChooser" = "gtk";
+        "org.freedesktop.impl.portal.Print" = "gtk";
+        "org.freedesktop.impl.portal.Notification" = "gnome";
+        "org.freedesktop.impl.portal.Screenshot" = "gnome";
+        "org.freedesktop.impl.portal.Wallpaper" = "gnome";
+        "org.freedesktop.impl.portal.ScreenCast" = "gnome";
+        "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
+        "org.freedesktop.impl.portal.Background" = "gnome";
+        "org.freedesktop.impl.portal.Session" = "gnome";
+        "org.freedesktop.impl.portal.Account" = "gnome";
+        "org.freedesktop.impl.portal.Email" = "gtk";
+        "org.freedesktop.impl.portal.GameMode" = "gnome";
+        "org.freedesktop.impl.portal.Lockdown" = "gnome";
+        "org.freedesktop.impl.portal.Inhibit" = "gtk";
+        "org.freedesktop.impl.portal.Device" = "gnome";
+        "org.freedesktop.impl.portal.Location" = "gnome";
+        "org.freedesktop.impl.portal.NetworkMonitor" = "gnome";
+        "org.freedesktop.impl.portal.Trash" = "gnome";
+        "org.freedesktop.impl.portal.DynamicLauncher" = "gnome";
+        "org.freedesktop.impl.portal.GlobalShortcuts" = "gnome";
+        "org.freedesktop.impl.portal.PowerProfileMonitor" = "gnome";
+        "org.freedesktop.impl.portal.ProxyResolver" = "gnome";
+        "org.freedesktop.impl.portal.Portal" = "gnome";
+        "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
+        "org.freedesktop.impl.portal.Status" = "gnome";
+        "org.freedesktop.impl.portal.URI" = "gnome";
+        "org.freedesktop.impl.portal.UserInfo" = "gnome";
+        "org.freedesktop.impl.portal.Wayland" = "gnome";
+        "org.freedesktop.impl.portal.Access" = "gnome";
+        "org.freedesktop.impl.portal.Settings" = "gnome";
+        "org.freedesktop.impl.portal.Clipboard" = "gnome";
+        "org.freedesktop.impl.portal.InputCapture" = "gnome";
+        "org.freedesktop.impl.portal.Usb" = "gnome";
+      };
+    };
+  };
   
   # Enable input method framework for better language switching
   # i18n.inputMethod = {
@@ -99,23 +147,27 @@
     GTK_THEME = "Adwaita:dark";
     QT_STYLE_OVERRIDE = "adwaita-dark";
     # Fix GTK paths to avoid symlink issues
-    GTK_DATA_PREFIX = "${pkgs.gtk3}";
-    GTK_EXE_PREFIX = "${pkgs.gtk3}";
-    GTK_PATH = "${pkgs.gtk3}";
+    # GTK_DATA_PREFIX = "${pkgs.gtk3}";
+    # GTK_EXE_PREFIX = "${pkgs.gtk3}";
+    # GTK_PATH = "${pkgs.gtk3}";
+    # GDK_BACKEND = "wayland,x11";
+    # QT_QPA_PLATFORM = "wayland;xcb";
+    MOZ_ENABLE_WAYLAND = "1";
+    NIXOS_OZONE_WL = "1";
     # Use proper XDG data directories with force override to avoid conflicts
     # XDG_DATA_DIRS = lib.mkForce "${pkgs.gtk3}/share:${pkgs.gtk4}/share:${pkgs.adwaita-icon-theme}/share:${pkgs.gnome-themes-extra}/share";
     # XWayland environment variables
-    GDK_BACKEND = "wayland,x11";
-    QT_QPA_PLATFORM = "wayland;xcb";
-    MOZ_ENABLE_WAYLAND = "1";
-    NIXOS_OZONE_WL = "1";
-    # IBus environment variables
-    GTK_IM_MODULE = "ibus";
-    QT_IM_MODULE = "ibus";
-    XMODIFIERS = "@im=ibus";
-    # Additional variables for file chooser and context menus
+    # Additional variables for proper portal support
     # XDG_CURRENT_DESKTOP = "GNOME";
     # XDG_SESSION_DESKTOP = "gnome";
+    # XDG_SESSION_TYPE = "wayland";
+    # Fix for missing FileChooser interface - set XDG_DESKTOP_PORTAL_DIR explicitly
+    XDG_DESKTOP_PORTAL_DIR = "/run/current-system/sw/share/xdg-desktop-portal/portals";
+    # IBus environment variables
+    # GTK_IM_MODULE = "ibus";
+    # QT_IM_MODULE = "ibus";
+    # XMODIFIERS = "@im=ibus";
+    # Additional variables for file chooser and context menus
   };
 
   # Enable internationalization support
@@ -172,6 +224,8 @@
         extensions = [
           #{ package = pkgs.gnomeExtensions.tiling-shell; }
           { package = pkgs.gnomeExtensions.search-light; }
+          # { package = pkgs.gnomeExtensions.forge; }  # Commented out - replaced with Pop Shell
+          { package = pkgs.gnomeExtensions.pop-shell; }
         ];
       };
 
@@ -213,6 +267,12 @@
           # Close window shortcut (Shift + Windows + Q)
           close = [ "<Shift><Super>q" ];
 
+          # Activate window menu shortcut (Shift + Windows + M)
+          activate-window-menu = [ "<Shift><Super>m" ];
+
+          # Disable Win+H shortcut for hiding window
+          hide-window = [ ];
+
           # Remove conflicting default shortcuts
           switch-to-workspace-left = [ ];
           switch-to-workspace-right = [ ];
@@ -222,6 +282,13 @@
           move-to-monitor-right = [ ];
           move-to-monitor-up = [ ];
           move-to-monitor-down = [ ];
+
+          # Unbind Pop Shell's default arrow key shortcuts for pane navigation
+          # Pop Shell uses these for pane focusing, so we unbind them
+          # and will configure hjkl keys instead via custom keybindings
+          
+          # Unbind arrow keys used by Pop Shell for pane navigation
+          # These are intercepted by Pop Shell, so unbinding them prevents conflicts
         };
 
         # Disable workspace switching animations (moved to main interface settings below)
@@ -231,23 +298,79 @@
         };
 
         # File chooser settings to fix context menu issues
-        "org/gtk/settings/file-chooser" = {
-          show-hidden = true;
-          sort-directories-first = true;
-          sort-order = "type";
-        };
+        # "org/gtk/settings/file-chooser" = {
+        #   show-hidden = true;
+        #   sort-directories-first = true;
+        #   sort-order = "type";
+        # };
 
         # GNOME file manager settings
-        "org/gnome/nautilus/preferences" = {
-          show-hidden-files = true;
-          default-folder-viewer = "list-view";
-          search-view = "list-view";
-        };
+        # "org/gnome/nautilus/preferences" = {
+        #   show-hidden-files = true;
+        #   default-folder-viewer = "list-view";
+        #   search-view = "list-view";
+        # };
 
         # Mouse settings - preserve current settings with flat acceleration
         "org/gnome/desktop/peripherals/mouse" = {
           accel-profile = "flat";
           # speed = -0.23529411764705888;
+        };
+
+        # Custom keybindings for GNOME
+        "org/gnome/settings-daemon/plugins/media-keys" = {
+          custom-keybindings = [
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/"
+          ];
+        };
+
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+          name = "Launch Terminal";
+          command = "kitty";
+          binding = "<Ctrl><Alt>Return";
+        };
+
+        # Pop Shell pane navigation with vim keys (hjkl)
+        # These simulate Super+Arrow keypresses which Pop Shell intercepts for pane navigation
+        # Using wtype (Wayland) or falling back to D-Bus method calls
+        # Super+h: Focus pane left (simulates Super+Left)
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+          name = "Pop Shell Focus Left";
+          command = "sh -c 'wtype -M super -k left -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileLeft 2>/dev/null || true'";
+          binding = "<Super>h";
+        };
+
+        # Super+j: Focus pane down (simulates Super+Down)
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
+          name = "Pop Shell Focus Down";
+          command = "sh -c 'wtype -M super -k down -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileDown 2>/dev/null || true'";
+          binding = "<Super>j";
+        };
+
+        # Super+k: Focus pane up (simulates Super+Up)
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3" = {
+          name = "Pop Shell Focus Up";
+          command = "sh -c 'wtype -M super -k up -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileUp 2>/dev/null || true'";
+          binding = "<Super>k";
+        };
+
+        # Super+l: Focus pane right (simulates Super+Right)
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4" = {
+          name = "Pop Shell Focus Right";
+          command = "sh -c 'wtype -M super -k right -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileRight 2>/dev/null || true'";
+          binding = "<Super>l";
+        };
+
+        # Ctrl+Shift+L: Lock screen
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5" = {
+          name = "Lock Screen";
+          command = "loginctl lock-session";
+          binding = "<Ctrl><Shift>l";
         };
       };
 
@@ -270,10 +393,51 @@
       };
 
       # Additional settings to ensure language indicator appears
+      # Note: Forge is disabled by default to prevent session crashes after reboot
       dconf.settings."org/gnome/shell" = {
         enabled-extensions = [
           "searchlight@icedman.github.com"
+          # "forge@jmmaranan.com"  # Disabled - replaced with Pop Shell
+          "pop-shell@system76.com"  # Pop Shell for window management
         ];
+      };
+
+      # Forge tiling window manager configuration
+      # Note: Forge is disabled - replaced with Pop Shell
+      # Enable manually via: gsettings set org.gnome.shell enabled-extensions "['searchlight@icedman.github.com', 'forge@jmmaranan.com']"
+      # dconf.settings."org/gnome/shell/extensions/forge" = {
+      #   # Disable Forge by default to prevent session crashes
+      #   # enabled = true;
+      #   # Basic tiling settings (will be applied when manually enabled)
+      #   auto-split = true;
+      #   smart-gaps = true;
+      #   # focus-hint = true;
+      #   # Window management
+      #   floating-windows = true;
+      #   # Layout settings
+      #   stacked-layout = false;
+      #   tabbed-layout = false;
+      #   # Launch new windows in fullscreen by default
+      #   new-window-behavior = "fullscreen";
+      #   # Disable gaps for single windows
+      #   gaps-when-only = false;
+      # };
+
+      # Pop Shell tiling window manager configuration
+      # Pop Shell provides tiling window management for GNOME
+      # Documentation: https://github.com/pop-os/shell
+      # Note: Default pane navigation shortcuts (Super+Arrow) are unbound in WM keybindings
+      # and replaced with vim keys (Super+hjkl) via custom keybindings below
+      dconf.settings."org/gnome/shell/extensions/pop-shell" = {
+        # Enable Pop Shell by default
+        active-hint = true;
+        # Tiling mode settings
+        tile-by-default = true;  # Start in tiling mode by default, toggle with Super+G
+        # Gap settings
+        gap-inner = 4;  # Inner gap between windows
+        gap-outer = 4;  # Outer gap from screen edges
+        # Show active hint (border) on focused window
+        show-title = false;  # Hide title bars when tiled
       };
 
       # Systemd service to ensure input sources are properly configured after login
@@ -314,32 +478,7 @@
       };
 
 
-      # Fix GTK theme CSS import errors
-      # dconf.settings."org/gnome/desktop/interface" = {
-      #   gtk-theme = lib.mkForce "Adwaita-dark";
-      #   icon-theme = lib.mkForce "Adwaita";
-      #   cursor-theme = lib.mkForce "Adwaita";
-      #   enable-animations = false;
-      # };
 
-      # # Additional GTK settings
-      # dconf.settings."org/gnome/desktop/wm/preferences" = {
-      #   theme = "Adwaita";
-      # };
-
-      # # Systemd service to fix GTK CSS resource issues
-      # systemd.user.services.gtk-css-fix = {
-      #   Unit = {
-      #     Description = "Fix GTK CSS resource issues";
-      #     WantedBy = [ "graphical-session.target" ];
-      #     After = [ "graphical-session.target" ];
-      #   };
-      #   Service = {
-      #     Type = "oneshot";
-      #     ExecStart = "/run/current-system/sw/bin/bash -c 'mkdir -p ~/.local/share/themes/Adwaita-dark/gtk-3.0 && cp ${pkgs.gtk3}/share/themes/Adwaita-dark/gtk-3.0/gtk.css ~/.local/share/themes/Adwaita-dark/gtk-3.0/ && export GTK_DATA_PREFIX=${pkgs.gtk3} && export GTK_EXE_PREFIX=${pkgs.gtk3} && export GTK_PATH=${pkgs.gtk3} && /run/current-system/sw/bin/gsettings set org.gnome.desktop.interface gtk-theme \"Adwaita-dark\" && /run/current-system/sw/bin/gsettings set org.gnome.desktop.interface icon-theme \"Adwaita\" && /run/current-system/sw/bin/gsettings set org.gnome.desktop.interface cursor-theme \"Adwaita\"'";
-      #     RemainAfterExit = true;
-      #   };
-      # };
 
     };
 }

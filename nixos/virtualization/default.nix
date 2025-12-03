@@ -6,17 +6,21 @@
   environment.systemPackages = with pkgs; [
     virt-manager
     virt-viewer
-    # libguestfs
+    virtiofsd
+    libguestfs
     libguestfs-with-appliance
     spice
     spice-gtk
     # qemu_kvm
     spice-protocol
-    win-virtio
+    # win-virtio
     win-spice
 
     vagrant
     packer
+
+    nemu
+    realvnc-vnc-viewer
   ];
 
   virtualisation = {
@@ -24,9 +28,11 @@
       enable = true;
       qemu = {
         swtpm.enable = true;
-        ovmf.enable = true;
-        ovmf.packages = [ pkgs.OVMFFull.fd ];
+        # Now available by default
+        #ovmf.enable = true;
+        #ovmf.packages = [ pkgs.OVMFFull.fd ];
       };
+      qemu.vhostUserPackages = with pkgs; [ virtiofsd ];
     };
     spiceUSBRedirection.enable = true;
   };

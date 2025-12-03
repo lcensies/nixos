@@ -18,6 +18,17 @@ in
     };
   };
 
+  # Overlay to fix fcitx5-with-addons: it has been moved from libsForQt5 to qt6Packages
+  nixpkgs.overlays = [
+    (final: prev: {
+      libsForQt5 = prev.libsForQt5.overrideScope (final': prev': {
+        fcitx5-with-addons = prev.qt6Packages.fcitx5-with-addons;
+      });
+      # Also provide it at the top level for backward compatibility
+      fcitx5-with-addons = prev.qt6Packages.fcitx5-with-addons;
+    })
+  ];
+
   time.timeZone = "Europe/Moscow";
 
   # Enable internationalization support
@@ -70,7 +81,9 @@ in
     tmux
     freshfetch
     git
+    git-lfs
     nodejs_24
+    yazi
     rcm
     gnumake
     go
@@ -78,6 +91,7 @@ in
     zsh
     starship
     kitty
+    alacritty
     zoxide
     jq
     fzf
@@ -87,7 +101,6 @@ in
     lazygit
     just
     tmuxinator
-    nekoray
     zoxide
     atuin
     impala
@@ -95,14 +108,18 @@ in
     nixfmt
     lsof
     libisoburn
+    flatpak
     
-
+    unzip
   
     # Additional development packages
     openssl
     # C/C++
     gcc
+    clang
     llvmPackages_latest.llvm
+    # Common debugger
+    lldb
     # Python
     poetry
     uv
@@ -110,10 +127,30 @@ in
     cargo
     rustc
 
-  ];
+    devcontainer
+    waypipe
+    ffmpeg
+    
+    # LaTeX support
+    texlive.combined.scheme-full
 
-  services.resolved.enable = true;
-  programs.nekoray.tunMode.enable = true;
+    awscli2
+
+    # Linux kernel headers
+    config.boot.kernelPackages.kernel.dev
+
+    # rust-rover
+#
+    #wireshark
+
+    qrencode # qr generator
+  ];
+  
+  # MTP MOUNT
+  services.gvfs.enable = true;
+
+  # services.resolved.enable = true;
+  # programs.nekoray.tunMode.enable = true;
   #programs.mtr.enable = true;
   #programs.gnupg.agent = {
   #  enable = true;

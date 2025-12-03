@@ -6,6 +6,9 @@
     ./networking
     ./virtualization
     ./silent-boot
+    ./gaming
+    ./flatpak
+    ./development
     # ./wayland  # Disabled to prevent conflict with GNOME GDM
   ];
 }

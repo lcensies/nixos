@@ -96,7 +96,12 @@
   hardware.firmware = with pkgs; [ linux-firmware ];
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true; # 32-bit Vulkan for games
-  hardware.graphics.extraPackages = with pkgs; [ rocmPackages.clr.icd ];
+  hardware.graphics.extraPackages = with pkgs; [ 
+    rocmPackages.clr.icd
+    mesa
+    vulkan-loader
+    vulkan-tools
+  ];
 
   # Ambient light sensor (ALS)
   hardware.sensor.iio.enable = true;

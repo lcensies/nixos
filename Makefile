@@ -8,6 +8,10 @@ disko-vmware-vm:
 
 tb14:
 	sudo nixos-rebuild switch --flake '.#thinkbook14'
+	sudo nix-store --gc
+
+tb14offline:
+	sudo nixos-rebuild switch --flake '.#thinkbook14' --offline
 
 disko-tb14:
 	sudo nix --extra-experimental-features flakes --extra-experimental-features nix-command run 'github:nix-community/disko/latest#disko-install' -- --flake '.#thinkbook14' --disk main /dev/nvme0n1
@@ -25,4 +29,16 @@ home-manager:
 
 home-manager-edit:
 	home-manager edit --flake '.#esc2'
+
+# Cleanup targets
+clean:
+	@echo "Cleaning Nix store garbage..."
+	sudo nix-collect-garbage -d
+	sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system
+	sudo nix-store --gc
+	rm -r ~/.cache
+	@echo "Garbage collection complete."
+
+
+.PHONY: clean clean-boot clean-all
 

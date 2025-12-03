@@ -1,10 +1,7 @@
 { config, pkgs, ... }:
 {
   # Import sing-box configuration
-  imports = [
-    ./sing-box.nix
-    ./mullvad.nix
-  ];
+  # imports = [ ./sing-box.nix ];
 
   boot.kernelModules = [ "tun" ];
   networking.hostName = "stable";
@@ -15,9 +12,9 @@
   networking.wireless.userControlled.enable = true;
 
   # Enable NetworkManager for VPN support
-  # networking.networkmanager.enable = true;
-  # networking.networkmanager.wifi.backend = "iwd";
-  # networking.wireless.iwd.enable = true;
+  networking.networkmanager.enable = true;
+  networking.networkmanager.wifi.backend = "iwd";
+  networking.wireless.iwd.enable = true;
 
   #networking.firewall.enable = false;
   #networking.firewall.allowedUDPPorts = [...];
@@ -30,27 +27,14 @@
     # WIFI tui
     impala
 
-    dig
-
-    
     openconnect
     openvpn
-    # Well, nekoray is broken as always
-    # nekoray
+    nekoray
     # v2raya currently not used
-    # amnezia-vpn
-    # NetworkManager VPN support. 
-    # Doesn't fckin work
-    # networkmanager-openvpn
+
+    # NetworkManager VPN support
+    networkmanager-openvpn
   ];
-
-  programs.amnezia-vpn.enable = true;
-  # services.amnezia-vpn.enable = true;
-
-  # Also might be required to use with sing-box
-  services.resolved.enable = true;
-  # programs.nekoray.tunMode.enable = true;
-
 
   # services.v2raya.enable = true; currently not used
 
