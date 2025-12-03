@@ -38,11 +38,14 @@
     # Well, nekoray is broken as always
     # nekoray
     # v2raya currently not used
-
+    # amnezia-vpn
     # NetworkManager VPN support. 
     # Doesn't fckin work
     # networkmanager-openvpn
   ];
+
+  programs.amnezia-vpn.enable = true;
+  # services.amnezia-vpn.enable = true;
 
   # Also might be required to use with sing-box
   services.resolved.enable = true;
