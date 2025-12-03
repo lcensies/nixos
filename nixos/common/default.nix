@@ -91,6 +91,7 @@ in
     zsh
     starship
     kitty
+    alacritty
     zoxide
     jq
     fzf
