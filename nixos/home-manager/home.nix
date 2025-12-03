@@ -102,6 +102,88 @@
     nix-direnv.enable = true;
   };
 
+  # User environment variables
+  home.sessionVariables = {
+    XDG_DATA_DIRS = "$HOME/.nix-profile/share:$XDG_DATA_DIRS";
+  };
+
+  # Wrapper script for waypipe applications
+  home.file.".local/bin/waypipe-chromium" = {
+    text = ''
+      #!/usr/bin/env bash
+      # Wrapper script for running Chromium via waypipe from remote Arch system
+      
+      # Check if archlinux VM is running, start it if not
+      if ! virsh list --state-running --name | grep -q "^archlinux$"; then
+        echo "$(date): archlinux VM not running, starting it..." >> /tmp/waypipe-chromium.log
+        virsh start archlinux
+        
+        # Wait for VM to be running (with timeout)
+        timeout=30
+        elapsed=0
+        while [ $elapsed -lt $timeout ]; do
+          if virsh list --state-running --name | grep -q "^archlinux$"; then
+            echo "$(date): archlinux VM started successfully" >> /tmp/waypipe-chromium.log
+            break
+          fi
+          sleep 1
+          elapsed=$((elapsed + 1))
+        done
+        
+        if [ $elapsed -ge $timeout ]; then
+          echo "$(date): Warning: archlinux VM may not have started in time" >> /tmp/waypipe-chromium.log
+        fi
+      else
+        echo "$(date): archlinux VM already running" >> /tmp/waypipe-chromium.log
+      fi
+      
+      # Set Wayland display
+      export WAYLAND_DISPLAY=''${WAYLAND_DISPLAY:-wayland-1}
+      
+      # Log for debugging
+      echo "$(date): Starting waypipe chromium" >> /tmp/waypipe-chromium.log
+      echo "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" >> /tmp/waypipe-chromium.log
+      
+      # Run waypipe with chromium on remote host
+      # Replace 'arch' with your actual SSH host name
+      exec ${pkgs.waypipe}/bin/waypipe --no-gpu ssh arch chromium --ozone-platform=wayland "$@"
+    '';
+    executable = true;
+  };
+
+  # Test wrapper script
+  home.file.".local/bin/test-desktop-entry" = {
+    text = ''
+      #!/usr/bin/env bash
+      # Simple test script to verify desktop entries work
+      ${pkgs.libnotify}/bin/notify-send "Desktop Entry Works!" "This custom desktop entry is functioning correctly."
+    '';
+    executable = true;
+  };
+
+  # Simple test desktop entry - launches a test notification
+  xdg.desktopEntries.test-desktop-entry = {
+    name = "Test Desktop Entry";
+    genericName = "Test Application";
+    exec = "/home/esc2/.local/bin/test-desktop-entry";
+    icon = "dialog-information";
+    terminal = false;
+    categories = [ "Utility" ];
+    comment = "Simple test to verify custom desktop entries work";
+  };
+
+  # Custom desktop entry for waypipe chromium
+  xdg.desktopEntries.arch-chromium = {
+    name = "Arch Chromium (Remote)";
+    genericName = "Web Browser";
+    exec = "/home/esc2/.local/bin/waypipe-chromium %U";
+    icon = "chromium";
+    terminal = false;
+    categories = [ "Network" "WebBrowser" ];
+    comment = "Chromium browser running on remote Arch system via waypipe";
+    mimeType = [ "text/html" "text/xml" ];
+  };
+
   # Syncthing service - managed manually via systemd user service
   systemd.user.services.syncthing = {
     Unit = {
