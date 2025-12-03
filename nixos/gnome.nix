@@ -36,7 +36,8 @@
     # Pomodoro timer
     gnome-pomodoro
     # Tiling window manager
-    gnomeExtensions.forge
+    # gnomeExtensions.forge  # Commented out - replaced with Pop Shell
+    gnomeExtensions.pop-shell
   ];
 
   # Internationalization configuration
@@ -221,7 +222,8 @@
         extensions = [
           #{ package = pkgs.gnomeExtensions.tiling-shell; }
           { package = pkgs.gnomeExtensions.search-light; }
-          { package = pkgs.gnomeExtensions.forge; }
+          # { package = pkgs.gnomeExtensions.forge; }  # Commented out - replaced with Pop Shell
+          { package = pkgs.gnomeExtensions.pop-shell; }
         ];
       };
 
@@ -343,29 +345,45 @@
       dconf.settings."org/gnome/shell" = {
         enabled-extensions = [
           "searchlight@icedman.github.com"
-          # "forge@jmmaranan.com"  # Disabled by default to prevent crashes
+          # "forge@jmmaranan.com"  # Disabled - replaced with Pop Shell
+          "pop-shell@system76.com"  # Pop Shell for window management
         ];
       };
 
       # Forge tiling window manager configuration
-      # Note: Forge is disabled by default due to session crash issues after reboot
+      # Note: Forge is disabled - replaced with Pop Shell
       # Enable manually via: gsettings set org.gnome.shell enabled-extensions "['searchlight@icedman.github.com', 'forge@jmmaranan.com']"
-      dconf.settings."org/gnome/shell/extensions/forge" = {
-        # Disable Forge by default to prevent session crashes
-        # enabled = true;
-        # Basic tiling settings (will be applied when manually enabled)
-        auto-split = true;
-        smart-gaps = true;
-        # focus-hint = true;
-        # Window management
-        floating-windows = true;
-        # Layout settings
-        stacked-layout = false;
-        tabbed-layout = false;
-        # Launch new windows in fullscreen by default
-        new-window-behavior = "fullscreen";
-        # Disable gaps for single windows
-        gaps-when-only = false;
+      # dconf.settings."org/gnome/shell/extensions/forge" = {
+      #   # Disable Forge by default to prevent session crashes
+      #   # enabled = true;
+      #   # Basic tiling settings (will be applied when manually enabled)
+      #   auto-split = true;
+      #   smart-gaps = true;
+      #   # focus-hint = true;
+      #   # Window management
+      #   floating-windows = true;
+      #   # Layout settings
+      #   stacked-layout = false;
+      #   tabbed-layout = false;
+      #   # Launch new windows in fullscreen by default
+      #   new-window-behavior = "fullscreen";
+      #   # Disable gaps for single windows
+      #   gaps-when-only = false;
+      # };
+
+      # Pop Shell tiling window manager configuration
+      # Pop Shell provides tiling window management for GNOME
+      # Documentation: https://github.com/pop-os/shell
+      dconf.settings."org/gnome/shell/extensions/pop-shell" = {
+        # Enable Pop Shell by default
+        active-hint = true;
+        # Tiling mode settings
+        tile-by-default = false;  # Start in floating mode, toggle with Super+G
+        # Gap settings
+        gap-inner = 4;  # Inner gap between windows
+        gap-outer = 4;  # Outer gap from screen edges
+        # Show active hint (border) on focused window
+        show-title = false;  # Hide title bars when tiled
       };
 
       # Systemd service to ensure input sources are properly configured after login
