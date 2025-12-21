@@ -9,6 +9,7 @@
     virtiofsd
     libguestfs
     libguestfs-with-appliance
+    guestfs-tools  # Provides virt-customize, virt-sysprep, etc.
     spice
     spice-gtk
     # qemu_kvm

@@ -54,30 +54,37 @@
 
   services.xserver.videoDrivers = [ "amdgpu" ];
 
-  # Battery life tools
+  # Battery life tools (for diagnostics only)
   environment.systemPackages = with pkgs; [
-    powertop
-    ryzenadj
+    powertop  # Use with: sudo powertop
+    acpi      # Battery info
+    # ryzenadj  # Disabled - not needed with GNOME power management
   ];
 
-  # Prefer tuned + auto-epp instead of tlp (conflict)
+  # Use GNOME's power-profiles-daemon instead of multiple conflicting services
+  # GNOME's power management works excellently with AMD P-State and modern hardware
   services.tlp.enable = false;
-  services.tuned = {
-    enable = true;
-    settings.dynamic_tuning = true;
-  };
+  services.power-profiles-daemon.enable = true;  # GNOME's built-in power manager
+  
+  # Commented out to avoid conflicts with GNOME's power-profiles-daemon
+  # Uncomment if you want to use tuned + auto-epp instead
+  # services.tuned = {
+  #   enable = true;
+  #   settings.dynamic_tuning = true;
+  # };
 
-  services.auto-epp = {
-    enable = true;
-    settings.Settings = {
-      epp_state_for_AC = "balance_performance";
-      epp_state_for_BAT = "power";
-    };
-  };
+  # services.auto-epp = {
+  #   enable = true;
+  #   settings.Settings = {
+  #     epp_state_for_AC = "balance_performance";
+  #     epp_state_for_BAT = "power";
+  #   };
+  # };
 
   powerManagement = {
     enable = true;
-    powertop.enable = true; # powertop --auto-tune
+    powertop.enable = false;  # Disabled - conflicts with power-profiles-daemon
+    # To use powertop auto-tune, set to true and disable power-profiles-daemon
   };
 
   # Run ryzenadj once on boot with power-saving profile

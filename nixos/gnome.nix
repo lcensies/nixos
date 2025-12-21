@@ -3,11 +3,23 @@
   # System-level GNOME configuration
   services.displayManager.gdm = {
     enable = true;
-    # Prevent automatic session restarts that cause double login
+    # Enable autoSuspend for better battery life at login screen
     autoSuspend = false;
     wayland = true;
   };
   services.desktopManager.gnome.enable = true;
+
+  # Enable NetworkManager for network and VPN management in GNOME
+  networking.networkmanager = {
+    enable = true;
+    plugins = with pkgs; [
+      networkmanager-l2tp
+      networkmanager-openvpn
+    ];
+  };
+
+  # Add user to networkmanager group for VPN management
+  users.users.esc2.extraGroups = [ "networkmanager" ];
 
   environment.gnome.excludePackages = with pkgs; [
     # gnome-music
@@ -40,6 +52,8 @@
     gnomeExtensions.pop-shell
     # Wayland keyboard input tool for simulating keypresses (used for Pop Shell vim keybindings)
     wtype
+    # VPN plugins for NetworkManager
+    networkmanagerapplet
   ];
 
   # Internationalization configuration

@@ -111,6 +111,7 @@ in
     flatpak
     
     unzip
+    unrar
   
     # Additional development packages
     openssl

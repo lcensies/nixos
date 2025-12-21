@@ -3,36 +3,29 @@
 {
   # Container tools packages
   environment.systemPackages = with pkgs; [
-    podman
+    docker
+    docker-compose
     distrobox
-    podman-compose
-    buildah
-    skopeo
+    # K8s
+    minikube
+    kubectl
+    kubernetes-helm
   ];
 
   # Enable common container config files in /etc/containers
   virtualisation.containers.enable = true;
 
   virtualisation = {
-    podman = {
+    docker = {
       enable = true;
-
-      # Create a `docker` alias for podman, to use it as a drop-in replacement
-      dockerCompat = true;
-
-      # Required for containers under podman-compose to be able to talk to each other.
-      defaultNetwork.settings.dns_enabled = true;
+      # Enable Docker daemon on boot
+      enableOnBoot = true;
     };
   };
 
-  # Add podman group to user
+  # Add docker group to user
   users.users.esc2 = {
-    extraGroups = [ "podman" ];
-  };
-
-  # Environment variables for Docker Compose to work with Podman
-  environment.sessionVariables = {
-    DOCKER_HOST = "unix:///run/podman/podman.sock";
+    extraGroups = [ "docker" ];
   };
 
 }

@@ -20,5 +20,7 @@
     # Rust
     cargo
     rustc
+
+    gns3-gui
   ];
 }

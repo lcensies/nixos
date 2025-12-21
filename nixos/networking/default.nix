@@ -9,12 +9,14 @@
   boot.kernelModules = [ "tun" ];
   networking.hostName = "stable";
 
-  # networking.wireless.enable = true;
+  # NetworkManager is enabled in gnome.nix for VPN support
+  # Note: NetworkManager conflicts with wpa_supplicant, so wireless.enable is disabled
+  # networking.wireless.enable = false;
 
-  # wpa_supplicant
-  networking.wireless.userControlled.enable = true;
+  # wpa_supplicant (disabled when using NetworkManager)
+  # networking.wireless.userControlled.enable = true;
 
-  # Enable NetworkManager for VPN support
+  # NetworkManager configuration is in gnome.nix
   # networking.networkmanager.enable = true;
   # networking.networkmanager.wifi.backend = "iwd";
   # networking.wireless.iwd.enable = true;
@@ -39,9 +41,8 @@
     # nekoray
     # v2raya currently not used
     # amnezia-vpn
-    # NetworkManager VPN support. 
-    # Doesn't fckin work
-    # networkmanager-openvpn
+    # NetworkManager VPN support is now properly configured in gnome.nix
+    # with networkmanager-l2tp and networkmanager-openvpn as plugins
   ];
 
   programs.amnezia-vpn.enable = true;
@@ -65,6 +66,6 @@
   #Syntax :
   #networking.wireless.networks.Network-Name.psk = "password";
 
-  # users.users.esc2.extraGroups = [ "networkmanager" ];
+  # User networkmanager group membership is configured in gnome.nix
 
 }

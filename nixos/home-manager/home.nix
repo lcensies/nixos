@@ -29,10 +29,10 @@
     code-cursor
     vscode
     #Browser
-    firefox
+    # firefox
     tor-browser
     # Second firefox
-    librewolf
+    # librewolf
     # For compatibility
     chromium
     # Just for fun
