@@ -13,6 +13,8 @@
     # ./config/firefox.nix
     # ./config/yt-dlp.nix
 
+    # Music
+    ./music/default.nix
 
     # Sway specific
     #./config/theme.nix
@@ -92,6 +94,7 @@
 
     zoom
 
+    # Reader
     foliate
   ];
 
