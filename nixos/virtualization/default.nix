@@ -20,7 +20,7 @@
     packer
 
     nemu
-    realvnc-vnc-viewer
+    #realvnc-vnc-viewer # Takes too long to build
   ];
 
   virtualisation = {
@@ -39,6 +39,7 @@
 
   # Enable default libvirt network
   virtualisation.libvirtd.allowedBridges = [ "virbr0" ];
+  networking.firewall.trustedInterfaces = [ "virbr0"];
 
   # Start default libvirt network automatically
   systemd.services.libvirt-default-network = {

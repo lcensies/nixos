@@ -20,5 +20,7 @@
     # Rust
     cargo
     rustc
+
+    opencode
   ];
 }

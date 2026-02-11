@@ -25,7 +25,7 @@ configure:
 	rcup -v
 
 home-manager:
-	home-manager switch --flake '.#esc2'
+	home-manager switch --flake '.#esc2' --impure
 
 home-manager-edit:
 	home-manager edit --flake '.#esc2'

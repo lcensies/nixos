@@ -86,7 +86,7 @@
 
     # Diagrams
     drawio
-    anytype
+    #anytype
     deluge
     obs-studio
 
