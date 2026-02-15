@@ -28,7 +28,8 @@
     # Lutris is used instead
     # { appId = "com.valvesoftware.Steam"; origin = "flathub"; }
     # { appId = "com.valvesoftware.Steam.CompatibilityTool.Proton"; origin = "flathub"; }
-    { appId = "com.jetbrains.RustRover"; origin = "flathub"; }
+    # Commented out due to geo-blocking (HTTP 451) from JetBrains servers
+    # { appId = "com.jetbrains.RustRover"; origin = "flathub"; }
     { appId = "net.lutris.Lutris"; origin = "flathub"; }
     #"im.riot.Riot"
   ];
