@@ -22,5 +22,8 @@
     rustc
 
     opencode
+
+    gh
+    glab
   ];
 }
