@@ -144,6 +144,15 @@ in
     #wireshark
 
     qrencode # qr generator
+
+    scrot
+    imagemagick
+
+    ydotool
+
+    charm-freeze
+
+    md2pdf
   ];
   
   # MTP MOUNT
