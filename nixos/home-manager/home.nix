@@ -93,6 +93,8 @@
     zoom
 
     foliate
+
+    chatbox
   ];
 
   programs.direnv = {
@@ -111,19 +113,37 @@
   home.file.".local/bin/waypipe-chromium" = {
     text = ''
       #!/usr/bin/env bash
-      # Wrapper script for running Chromium via waypipe from remote Arch system
+      # Wrapper script for running Chromium via waypipe from remote system
       
-      # Check if archlinux VM is running, start it if not
-      if ! virsh list --state-running --name | grep -q "^archlinux$"; then
-        echo "$(date): archlinux VM not running, starting it..." >> /tmp/waypipe-chromium.log
-        virsh start archlinux
+      # Parse VM parameter from environment or use default
+      VM_NAME="''${WAYPIPE_VM:-end}"
+      
+      # Parse additional args
+      EXTRA_ARGS=()
+      while [[ $# -gt 0 ]]; do
+        case $1 in
+          --vm)
+            VM_NAME="$2"
+            shift 2
+            ;;
+          *)
+            EXTRA_ARGS+=("$1")
+            shift
+            ;;
+        esac
+      done
+      
+      # Check if VM is running, start it if not
+      if ! virsh list --state-running --name | grep -q "^$VM_NAME$"; then
+        echo "$(date): $VM_NAME VM not running, starting it..." >> /tmp/waypipe-chromium.log
+        virsh start "$VM_NAME"
         
         # Wait for VM to be running (with timeout)
         timeout=30
         elapsed=0
         while [ $elapsed -lt $timeout ]; do
-          if virsh list --state-running --name | grep -q "^archlinux$"; then
-            echo "$(date): archlinux VM started successfully" >> /tmp/waypipe-chromium.log
+          if virsh list --state-running --name | grep -q "^$VM_NAME$"; then
+            echo "$(date): $VM_NAME VM started successfully" >> /tmp/waypipe-chromium.log
             break
           fi
           sleep 1
@@ -131,22 +151,22 @@
         done
         
         if [ $elapsed -ge $timeout ]; then
-          echo "$(date): Warning: archlinux VM may not have started in time" >> /tmp/waypipe-chromium.log
+          echo "$(date): Warning: $VM_NAME VM may not have started in time" >> /tmp/waypipe-chromium.log
         fi
       else
-        echo "$(date): archlinux VM already running" >> /tmp/waypipe-chromium.log
+        echo "$(date): $VM_NAME VM already running" >> /tmp/waypipe-chromium.log
       fi
       
       # Set Wayland display
       export WAYLAND_DISPLAY=''${WAYLAND_DISPLAY:-wayland-1}
       
       # Log for debugging
-      echo "$(date): Starting waypipe chromium" >> /tmp/waypipe-chromium.log
+      echo "$(date): Starting waypipe chromium on VM: $VM_NAME" >> /tmp/waypipe-chromium.log
       echo "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" >> /tmp/waypipe-chromium.log
       
       # Run waypipe with chromium on remote host
-      # Replace 'arch' with your actual SSH host name
-      exec ${pkgs.waypipe}/bin/waypipe --no-gpu ssh arch chromium --ozone-platform=wayland "$@"
+      # The SSH hostname should match the VM name
+      exec ${pkgs.waypipe}/bin/waypipe --no-gpu ssh "$VM_NAME" chromium --ozone-platform=wayland "''${EXTRA_ARGS[@]}"
     '';
     executable = true;
   };
@@ -174,13 +194,13 @@
 
   # Custom desktop entry for waypipe chromium
   xdg.desktopEntries.arch-chromium = {
-    name = "Arch Chromium (Remote)";
+    name = "End Chromium (Remote)";
     genericName = "Web Browser";
     exec = "/home/esc2/.local/bin/waypipe-chromium %U";
     icon = "chromium";
     terminal = false;
     categories = [ "Network" "WebBrowser" ];
-    comment = "Chromium browser running on remote Arch system via waypipe";
+    comment = "Chromium browser running on end VM via waypipe";
     mimeType = [ "text/html" "text/xml" ];
   };
 
