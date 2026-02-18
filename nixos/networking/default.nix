@@ -42,6 +42,11 @@
     # NetworkManager VPN support. 
     # Doesn't fckin work
     # networkmanager-openvpn
+
+
+
+    # Debugging
+    traceroute
   ];
 
   programs.amnezia-vpn.enable = true;

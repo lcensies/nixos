@@ -95,6 +95,8 @@
     foliate
 
     chatbox
+
+    vesktop
   ];
 
   programs.direnv = {
@@ -163,6 +165,21 @@
       # Log for debugging
       echo "$(date): Starting waypipe chromium on VM: $VM_NAME" >> /tmp/waypipe-chromium.log
       echo "WAYLAND_DISPLAY=$WAYLAND_DISPLAY" >> /tmp/waypipe-chromium.log
+      
+      # Check if waypipe and chromium are installed on the remote VM
+      echo "$(date): Checking for required packages on $VM_NAME..." >> /tmp/waypipe-chromium.log
+      if ! ssh "$VM_NAME" 'command -v waypipe >/dev/null 2>&1 && command -v chromium >/dev/null 2>&1'; then
+        echo "$(date): waypipe or chromium not found, installing..." >> /tmp/waypipe-chromium.log
+        ssh -t "$VM_NAME" 'sudo pacman -Sy glibc chromium waypipe'
+        if [ $? -eq 0 ]; then
+          echo "$(date): Packages installed successfully" >> /tmp/waypipe-chromium.log
+        else
+          echo "$(date): Failed to install packages" >> /tmp/waypipe-chromium.log
+          exit 1
+        fi
+      else
+        echo "$(date): Required packages already installed" >> /tmp/waypipe-chromium.log
+      fi
       
       # Run waypipe with chromium on remote host
       # The SSH hostname should match the VM name

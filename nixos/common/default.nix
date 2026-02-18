@@ -140,7 +140,6 @@ in
     config.boot.kernelPackages.kernel.dev
 
     # rust-rover
-#
     #wireshark
 
     qrencode # qr generator
