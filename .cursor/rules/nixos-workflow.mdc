@@ -1,0 +1,16 @@
+---
+description: Repo workflow for building/testing this NixOS config
+alwaysApply: true
+---
+
+# NixOS repo workflow
+
+- **Rebuild command**: Prefer using `make tb14` to build/switch this configuration (instead of ad-hoc `nixos-rebuild` commands), unless explicitly asked otherwise.
+- **Changes style**:
+  - Keep Nix changes small and scoped (one behavior change per edit when possible).
+  - Prefer using existing modules/options over bespoke scripting.
+  - When editing networking/virtualization, be extra careful about defaults and backwards compatibility.
+- **AI/agent tooling**:
+  - Put AI/ML/agent-related Home Manager packages in `nixos/home-manager/config/ml.nix` and import it from `nixos/home-manager/home.nix`.
+  - **Flakes don’t include untracked files** (they evaluate from the Git snapshot), so `git add` any new `.nix` files (like `ml.nix`) before running `nix eval`, `make tb14`, or `home-manager switch`.
+

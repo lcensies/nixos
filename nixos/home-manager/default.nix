@@ -10,5 +10,14 @@
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
 
-  home-manager.users.esc2 = { config, pkgs, ... }: import ./home.nix { inherit config pkgs inputs; };
+  home-manager.extraSpecialArgs = { inherit inputs; };
+
+  home-manager.users.esc2 =
+    { config, pkgs, ... }:
+    {
+      imports = [
+        (import ./home.nix { inherit config pkgs inputs; })
+        ./config/ml.nix
+      ];
+    };
 }

@@ -23,6 +23,11 @@
 
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.6.0";
 
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -89,7 +94,10 @@
         "esc2" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
           extraSpecialArgs = { inherit inputs outputs; };
-          modules = [ ./nixos/home-manager/home.nix ];
+          modules = [
+            ./nixos/home-manager/home.nix
+            ./nixos/home-manager/config/ml.nix
+          ];
         };
       };
     };
