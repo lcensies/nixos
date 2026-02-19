@@ -75,8 +75,6 @@ in
 
   environment.systemPackages = with pkgs; [
     bc
-    vim
-    neovim
     wget
     tmux
     freshfetch

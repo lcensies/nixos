@@ -2,6 +2,7 @@
 {
   imports = [
     ./common
+    ./vim
     ./audio
     ./networking
     ./virtualization
