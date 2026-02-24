@@ -28,6 +28,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    handy.url = "github:cjpais/Handy";
+
+    preload-ng.url = "github:miguel-b-p/preload-ng";
+
     # nixpkgs with neovim-unwrapped tree-sitter fix (so lazyvim-nix evaluates)
     nixpkgs-neovim-fix = {
       url = "path:./nixos/nixpkgs-neovim-fix";
@@ -100,8 +104,11 @@
             system = "x86_64-linux";
             modules = [
               inputs.nix-flatpak.nixosModules.nix-flatpak
+              inputs.preload-ng.nixosModules.default
               ./hosts/thinkbook14
               ./nixos/home-manager # Fixed fcitx5 issue with package override
+              # NUR overlay so Home Manager Firefox extensions (e.g. rycee firefox-addons) are available
+              ({ inputs, ... }: { nixpkgs.overlays = [ inputs.nur.overlays.default ]; })
             ];
           };
 
@@ -118,7 +125,7 @@
 
       homeConfigurations = {
         "esc2" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          pkgs = nixpkgs.legacyPackages.x86_64-linux.extend inputs.nur.overlays.default;
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
             ./nixos/home-manager/home.nix

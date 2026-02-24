@@ -12,6 +12,7 @@
     ./flatpak
     ./development
     ./backups
+    ./optimization
     # ./wayland  # Disabled to prevent conflict with GNOME GDM
   ];
 }

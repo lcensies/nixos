@@ -11,7 +11,7 @@
     # ./config/alacritty.nix
     # ./config/neovim.nix  # replaced by LazyVim (lazyvim-nixvim)
     # ./config/lazyvim.nix  # disabled: lazyvim-nix path removed
-    # ./config/firefox.nix
+    ./config/firefox.nix
     # ./config/yt-dlp.nix
 
 
@@ -23,6 +23,7 @@
   ];
 
   home.packages = with pkgs; [
+    inputs.handy.packages.x86_64-linux.handy
     git
     git-lfs
     rcm

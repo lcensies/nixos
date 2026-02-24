@@ -59,12 +59,28 @@ in
     "defaults": {
       "model": { "primary": "openai/gpt-4.1" }
     }
+  },
+  "skills": {
+    "entries": {
+      "gog-calendar": { "enabled": false }
+    }
   }
 }
 EOF
       fi
       ${pkgs.coreutils}/bin/chown ${toString cfg.userUid}:${toString cfg.userGid} "${configFile}"
       ${pkgs.coreutils}/bin/chmod 0600 "${configFile}"
+
+      # Populate workspace from repo template if missing (unified workspace: no per-file mounts)
+      repo_workspace="${composeDir}/workspace"
+      if [ -d "$repo_workspace" ]; then
+        for f in "$repo_workspace"/*; do
+          [ -e "$f" ] || continue
+          dest="${workspaceDir}/$(${pkgs.coreutils}/bin/basename "$f")"
+          [ -e "$dest" ] || ${pkgs.coreutils}/bin/cp "$f" "$dest"
+        done
+        ${pkgs.coreutils}/bin/chown -R ${toString cfg.userUid}:${toString cfg.userGid} "${workspaceDir}"
+      fi
 
       if [ ! -e "${envFile}" ]; then
         umask 077
@@ -121,6 +137,13 @@ EOF
             cid="$(${pkgs.podman}/bin/podman create localhost/openclaw-local:latest)"
             ${pkgs.podman}/bin/podman cp "$cid:/opt/openclaw-skills/." "${skillsDir}/"
             ${pkgs.podman}/bin/podman rm "$cid"
+            # Overlay repo custom skills (e.g. gog from actual CLI)
+            if [ -d "${composeDir}/skills" ]; then
+              for skill in "${composeDir}/skills"/*/; do
+                [ -d "$skill" ] || continue
+                ${pkgs.coreutils}/bin/cp -r "$skill" "${skillsDir}/"
+              done
+            fi
             ${pkgs.coreutils}/bin/chmod -R a+rX "${skillsDir}"
           ''))
         ];

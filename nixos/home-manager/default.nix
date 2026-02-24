@@ -9,6 +9,8 @@
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
+  # Back up existing files (e.g. ~/.mozilla/firefox/profiles.ini) instead of failing activation
+  home-manager.backupFileExtension = "backup";
 
   home-manager.extraSpecialArgs = { inherit inputs; };
 

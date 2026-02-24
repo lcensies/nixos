@@ -4,6 +4,7 @@ services:
     pull_policy: never
     restart: unless-stopped
     init: true
+    container_name: openclaw
     env_file:
       - /var/lib/openclaw/config/.env
     environment:
@@ -14,14 +15,11 @@ services:
       - "127.0.0.1:18790:18790"
       - "127.0.0.1:44073:44073"
     volumes:
-      # Persistent config and workspace state
+      # Persistent config and unified workspace (SOUL.md, AGENTS.md, etc. live under stateDir/workspace)
       - /var/lib/openclaw/config:/home/node/.openclaw
       - /var/lib/openclaw/workspace:/home/node/.openclaw/workspace
-      # Skills baked into the image, mounted read-only into the workspace skills dir
+      # Skills baked into the image + repo custom skills, mounted read-only into the workspace skills dir
       - /opt/openclaw-skills:/home/node/.openclaw/workspace/skills:ro
-      # Bootstrap identity files from repo, read-only
-      - ./SOUL.md:/home/node/.openclaw/workspace/SOUL.md:ro
-      - ./AGENTS.md:/home/node/.openclaw/workspace/AGENTS.md:ro
       # gogcli config dir — writable so it can store OAuth state and tokens
       - /home/esc2/.secrets/google-calendar:/home/node/.config/gogcli
     command:

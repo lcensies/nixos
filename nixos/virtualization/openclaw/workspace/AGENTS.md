@@ -6,7 +6,7 @@ Read SOUL.md first to understand who you are serving and how to embody their voi
 
 ## Available Skills
 
-- **gog-calendar**: Google Calendar via gogcli (`gog` binary). Use for agenda, event search, and calendar writes. Always confirm before any write operation.
+- **gog**: Google Calendar (and Gmail/Drive/Contacts/Sheets/Docs) via the `gog` CLI (gogcli). Use for agenda, event search, and calendar writes. Always confirm before any write operation.
 - **soul**: Embody the identity defined in SOUL.md / STYLE.md when asked.
 
 ## Behavioural Defaults
