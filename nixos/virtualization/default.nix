@@ -2,7 +2,7 @@
 {
   imports = [
     ./containers.nix
-    ./openclaw.nix
+    ./openclaw
   ];
 
   # Libvirt's default NAT network (`virbr0`) requires host IP forwarding.

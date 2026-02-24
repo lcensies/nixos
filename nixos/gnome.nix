@@ -16,6 +16,8 @@
     # epiphany
     # geary
     totem
+    tinysparql
+    localsearch
   ];
 
   environment.systemPackages = with pkgs; [
@@ -38,6 +40,7 @@
     # Tiling window manager
     # gnomeExtensions.forge  # Commented out - replaced with Pop Shell
     gnomeExtensions.pop-shell
+    gnomeExtensions.search-light
     # Wayland keyboard input tool for simulating keypresses (used for Pop Shell vim keybindings)
     wtype
   ];
@@ -331,8 +334,8 @@
 
         "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
           name = "Launch Terminal";
-          command = "kitty";
-          binding = "<Ctrl><Alt>Return";
+          command = "/home/esc2/.local/bin/focus-or-launch-kitty";
+          binding = "<Ctrl><Alt>t";
         };
 
         # Pop Shell pane navigation with vim keys (hjkl)
@@ -396,7 +399,7 @@
       # Note: Forge is disabled by default to prevent session crashes after reboot
       dconf.settings."org/gnome/shell" = {
         enabled-extensions = [
-          "searchlight@icedman.github.com"
+          "search-light@icedman.github.com"
           # "forge@jmmaranan.com"  # Disabled - replaced with Pop Shell
           "pop-shell@system76.com"  # Pop Shell for window management
         ];
@@ -404,7 +407,7 @@
 
       # Forge tiling window manager configuration
       # Note: Forge is disabled - replaced with Pop Shell
-      # Enable manually via: gsettings set org.gnome.shell enabled-extensions "['searchlight@icedman.github.com', 'forge@jmmaranan.com']"
+      # Enable manually via: gsettings set org.gnome.shell enabled-extensions "['search-light@icedman.github.com', 'forge@jmmaranan.com']"
       # dconf.settings."org/gnome/shell/extensions/forge" = {
       #   # Disable Forge by default to prevent session crashes
       #   # enabled = true;
@@ -428,6 +431,14 @@
       # Documentation: https://github.com/pop-os/shell
       # Note: Default pane navigation shortcuts (Super+Arrow) are unbound in WM keybindings
       # and replaced with vim keys (Super+hjkl) via custom keybindings below
+      dconf.settings."org/gnome/desktop/interface" = {
+        enable-animations = false;
+      };
+
+      dconf.settings."org/gnome/shell/extensions/search-light" = {
+        shortcut-search = [ "<Alt>space" ];
+      };
+
       dconf.settings."org/gnome/shell/extensions/pop-shell" = {
         # Enable Pop Shell by default
         active-hint = true;

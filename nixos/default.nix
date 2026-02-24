@@ -1,8 +1,9 @@
 { inputs, ... }:
 {
+  services.openclawGateway.enable = true;
+
   imports = [
     ./common
-    ./vim
     ./audio
     ./networking
     ./virtualization

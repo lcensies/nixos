@@ -28,6 +28,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # nixpkgs with neovim-unwrapped tree-sitter fix (so lazyvim-nix evaluates)
+    nixpkgs-neovim-fix = {
+      url = "path:./nixos/nixpkgs-neovim-fix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # Local LazyVim config (nixos/vim/lazyvim-nix)
+    lazyvim-nixvim = {
+      url = "path:./nixos/vim/lazyvim-nix";
+      inputs.nixpkgs.follows = "nixpkgs-neovim-fix";
+    };
+
   };
 
   outputs =
@@ -45,12 +56,27 @@
         "x86_64-linux"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
+
+      # Fix neovim-unwrapped when tree-sitter grammars use url/hash instead of src
+      # (nixpkgs mismatch: package.nix expects grammar.src, treesitter-parsers may give url).
+      neovimOverlay = nixpkgsPath: final: prev: {
+        neovim-unwrapped = prev.callPackage (nixpkgsPath + "/pkgs/by-name/ne/neovim-unwrapped/package.nix") {
+          treesitter-parsers = let
+            raw = import (nixpkgsPath + "/pkgs/by-name/ne/neovim-unwrapped/treesitter-parsers.nix") { fetchurl = prev.fetchurl; };
+          in prev.lib.mapAttrs (name: grammar:
+            if grammar ? src then grammar
+            else grammar // { src = prev.fetchurl { url = grammar.url; hash = grammar.hash; }; }
+          ) raw;
+        };
+      };
     in
     {
       #packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
-      # overlays = import ./overlays { inherit inputs; };
-      # nixosModules = import ./modules/nixos;
+      # Overlay to fix neovim-unwrapped tree-sitter grammar src/url mismatch in nixpkgs
+      overlays = {
+        neovim = neovimOverlay nixpkgs.outPath;
+      };
 
       nixosConfigurations =
         let

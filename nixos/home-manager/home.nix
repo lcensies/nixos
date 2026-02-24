@@ -9,7 +9,8 @@
     # ./config/git.nix
     ./config/bashrc.nix
     # ./config/alacritty.nix
-    #./config/neovim.nix
+    # ./config/neovim.nix  # replaced by LazyVim (lazyvim-nixvim)
+    # ./config/lazyvim.nix  # disabled: lazyvim-nix path removed
     # ./config/firefox.nix
     # ./config/yt-dlp.nix
 
@@ -109,6 +110,25 @@
   # User environment variables
   home.sessionVariables = {
     XDG_DATA_DIRS = "$HOME/.nix-profile/share:$XDG_DATA_DIRS";
+  };
+
+  # Focus existing kitty window or launch a new one
+  home.file.".local/bin/focus-or-launch-kitty" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      # Use gdbus to find and focus an existing kitty window via GNOME Shell.
+      # Falls back to launching a new kitty instance if none is found.
+      focused=$(gdbus call --session \
+        --dest org.gnome.Shell \
+        --object-path /org/gnome/Shell \
+        --method org.gnome.Shell.Eval \
+        "global.get_window_actors().find(a => a.get_meta_window().get_wm_class() === 'kitty')?.get_meta_window().activate(global.get_current_time()) ?? false" \
+        2>/dev/null | grep -o 'true')
+      if [[ "$focused" != "true" ]]; then
+        kitty &
+      fi
+    '';
   };
 
   # Wrapper script for waypipe applications

@@ -4,6 +4,8 @@
   imports = [
     ./sing-box.nix
     ./mullvad.nix
+    ./resolved-vpn.nix
+    ./amnezia.nix
   ];
 
   boot.kernelModules = [ "tun" ];
@@ -49,11 +51,13 @@
     traceroute
   ];
 
-  programs.amnezia-vpn.enable = true;
-  # services.amnezia-vpn.enable = true;
-
   # Also might be required to use with sing-box
   services.resolved.enable = true;
+
+  # systemd-resolved loses DNS state after hibernation/suspend; restart it on resume.
+  powerManagement.resumeCommands = ''
+    systemctl restart systemd-resolved.service
+  '';
   # programs.nekoray.tunMode.enable = true;
 
 

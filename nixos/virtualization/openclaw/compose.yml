@@ -1,0 +1,34 @@
+services:
+  openclaw-gateway:
+    image: localhost/openclaw-local:latest
+    pull_policy: never
+    restart: unless-stopped
+    init: true
+    env_file:
+      - /var/lib/openclaw/config/.env
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+    ports:
+      - "127.0.0.1:18789:18789"
+      - "127.0.0.1:18790:18790"
+      - "127.0.0.1:44073:44073"
+    volumes:
+      # Persistent config and workspace state
+      - /var/lib/openclaw/config:/home/node/.openclaw
+      - /var/lib/openclaw/workspace:/home/node/.openclaw/workspace
+      # Skills baked into the image, mounted read-only into the workspace skills dir
+      - /opt/openclaw-skills:/home/node/.openclaw/workspace/skills:ro
+      # Bootstrap identity files from repo, read-only
+      - ./SOUL.md:/home/node/.openclaw/workspace/SOUL.md:ro
+      - ./AGENTS.md:/home/node/.openclaw/workspace/AGENTS.md:ro
+      # gogcli config dir — writable so it can store OAuth state and tokens
+      - /home/esc2/.secrets/google-calendar:/home/node/.config/gogcli
+    command:
+      - node
+      - dist/index.js
+      - gateway
+      - --bind
+      - lan
+      - --port
+      - "18789"
