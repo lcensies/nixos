@@ -11,6 +11,7 @@
     ./gaming
     ./flatpak
     ./development
+    ./backups
     # ./wayland  # Disabled to prevent conflict with GNOME GDM
   ];
 }

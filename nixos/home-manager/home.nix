@@ -18,6 +18,8 @@
     # Sway specific
     #./config/theme.nix
     #./config/waybar.nix
+
+    ../backups/syncthing.nix
   ];
 
   home.packages = with pkgs; [
@@ -78,9 +80,6 @@
 
     # Note taking
     obsidian
-
-    # File synchronization
-    syncthing
 
     # Remote desktop
     remmina 
@@ -239,30 +238,6 @@
     categories = [ "Network" "WebBrowser" ];
     comment = "Chromium browser running on end VM via waypipe";
     mimeType = [ "text/html" "text/xml" ];
-  };
-
-  # Syncthing service - managed manually via systemd user service
-  systemd.user.services.syncthing = {
-    Unit = {
-      Description = "Syncthing - Open Source Continuous File Synchronization";
-      Documentation = "man:syncthing(1)";
-      After = [ "network.target" ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "${pkgs.syncthing}/bin/syncthing serve --config=/home/esc2/.config/syncthing --data=/home/esc2/.local/share/syncthing --no-browser --no-restart";
-      Restart = "on-failure";
-      RestartSec = 5;
-      SuccessExitStatus = [
-        "0"
-        "2"
-      ];
-      TimeoutStopSec = 5;
-      KillMode = "mixed";
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
   };
 
   # Packer QEMU plugin installation service - runs once after system boot

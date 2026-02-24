@@ -41,8 +41,7 @@
     # gnomeExtensions.forge  # Commented out - replaced with Pop Shell
     gnomeExtensions.pop-shell
     gnomeExtensions.search-light
-    # Wayland keyboard input tool for simulating keypresses (used for Pop Shell vim keybindings)
-    wtype
+    # wtype removed: Pop Shell handles hjkl keybindings natively via dconf
   ];
 
   # Internationalization configuration
@@ -273,10 +272,11 @@
           # Activate window menu shortcut (Shift + Windows + M)
           activate-window-menu = [ "<Shift><Super>m" ];
 
-          # Disable Win+H shortcut for hiding window
+          # Clear defaults that conflict with Pop Shell Win+hjkl move bindings
+          minimize = [ ];          # default: <Super>h — conflicts with move-left
           hide-window = [ ];
 
-          # Remove conflicting default shortcuts
+          # Clear GNOME defaults that would conflict with Pop Shell arrow-key focus bindings
           switch-to-workspace-left = [ ];
           switch-to-workspace-right = [ ];
           move-to-workspace-left = [ ];
@@ -285,13 +285,6 @@
           move-to-monitor-right = [ ];
           move-to-monitor-up = [ ];
           move-to-monitor-down = [ ];
-
-          # Unbind Pop Shell's default arrow key shortcuts for pane navigation
-          # Pop Shell uses these for pane focusing, so we unbind them
-          # and will configure hjkl keys instead via custom keybindings
-          
-          # Unbind arrow keys used by Pop Shell for pane navigation
-          # These are intercepted by Pop Shell, so unbinding them prevents conflicts
         };
 
         # Disable workspace switching animations (moved to main interface settings below)
@@ -322,13 +315,10 @@
 
         # Custom keybindings for GNOME
         "org/gnome/settings-daemon/plugins/media-keys" = {
+          screensaver = [ ];  # default: <Super>l — conflicts with move-right
           custom-keybindings = [
             "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
             "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
-            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
-            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/"
-            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/"
-            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/"
           ];
         };
 
@@ -338,39 +328,8 @@
           binding = "<Ctrl><Alt>t";
         };
 
-        # Pop Shell pane navigation with vim keys (hjkl)
-        # These simulate Super+Arrow keypresses which Pop Shell intercepts for pane navigation
-        # Using wtype (Wayland) or falling back to D-Bus method calls
-        # Super+h: Focus pane left (simulates Super+Left)
-        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
-          name = "Pop Shell Focus Left";
-          command = "sh -c 'wtype -M super -k left -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileLeft 2>/dev/null || true'";
-          binding = "<Super>h";
-        };
-
-        # Super+j: Focus pane down (simulates Super+Down)
-        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
-          name = "Pop Shell Focus Down";
-          command = "sh -c 'wtype -M super -k down -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileDown 2>/dev/null || true'";
-          binding = "<Super>j";
-        };
-
-        # Super+k: Focus pane up (simulates Super+Up)
-        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3" = {
-          name = "Pop Shell Focus Up";
-          command = "sh -c 'wtype -M super -k up -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileUp 2>/dev/null || true'";
-          binding = "<Super>k";
-        };
-
-        # Super+l: Focus pane right (simulates Super+Right)
-        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4" = {
-          name = "Pop Shell Focus Right";
-          command = "sh -c 'wtype -M super -k right -m super 2>/dev/null || gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/PopShell --method org.gnome.Shell.Extensions.PopShell.TileRight 2>/dev/null || true'";
-          binding = "<Super>l";
-        };
-
         # Ctrl+Shift+L: Lock screen
-        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5" = {
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
           name = "Lock Screen";
           command = "loginctl lock-session";
           binding = "<Ctrl><Shift>l";
@@ -426,11 +385,6 @@
       #   gaps-when-only = false;
       # };
 
-      # Pop Shell tiling window manager configuration
-      # Pop Shell provides tiling window management for GNOME
-      # Documentation: https://github.com/pop-os/shell
-      # Note: Default pane navigation shortcuts (Super+Arrow) are unbound in WM keybindings
-      # and replaced with vim keys (Super+hjkl) via custom keybindings below
       dconf.settings."org/gnome/desktop/interface" = {
         enable-animations = false;
       };
@@ -440,15 +394,23 @@
       };
 
       dconf.settings."org/gnome/shell/extensions/pop-shell" = {
-        # Enable Pop Shell by default
         active-hint = true;
-        # Tiling mode settings
-        tile-by-default = true;  # Start in tiling mode by default, toggle with Super+G
-        # Gap settings
-        gap-inner = 4;  # Inner gap between windows
-        gap-outer = 4;  # Outer gap from screen edges
-        # Show active hint (border) on focused window
-        show-title = false;  # Hide title bars when tiled
+        tile-by-default = true;
+        gap-inner = 4;
+        gap-outer = 4;
+        show-title = false;
+
+        # Win+hjkl: focus windows (navigate between tiles)
+        focus-left  = [ "<Super>h" "<Super>Left"  "<Super>KP_Left"  ];
+        focus-down  = [ "<Super>j" "<Super>Down"  "<Super>KP_Down"  ];
+        focus-up    = [ "<Super>k" "<Super>Up"    "<Super>KP_Up"    ];
+        focus-right = [ "<Super>l" "<Super>Right" "<Super>KP_Right" ];
+
+        # Move bindings left empty (use tile-enter mode for moving)
+        tile-move-left-global  = [ ];
+        tile-move-down-global  = [ ];
+        tile-move-up-global    = [ ];
+        tile-move-right-global = [ ];
       };
 
       # Systemd service to ensure input sources are properly configured after login

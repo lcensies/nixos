@@ -11,7 +11,8 @@ tb14:
 	sudo nix-store --gc
 
 tb14offline:
-	sudo nixos-rebuild switch --flake '.#thinkbook14' --offline
+	sudo nixos-rebuild --rollback switch --flake '.#thinkbook14' --offline
+	#sudo nixos-rebuild switch --flake '.#thinkbook14' --offline
 
 disko-tb14:
 	sudo nix --extra-experimental-features flakes --extra-experimental-features nix-command run 'github:nix-community/disko/latest#disko-install' -- --flake '.#thinkbook14' --disk main /dev/nvme0n1
