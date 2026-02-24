@@ -10,6 +10,13 @@ tb14:
 	sudo nixos-rebuild switch --flake '.#thinkbook14'
 	sudo nix-store --gc
 
+# First-time switch to Determinate Nix: use this once so current (upstream) Nix can fetch Determinate from cache. After that use `make tb14`.
+tb14-determinate-first:
+	sudo nixos-rebuild switch --flake '.#thinkbook14' \
+	  --option extra-substituters 'https://install.determinate.systems https://cache.flakehub.com' \
+	  --option extra-trusted-public-keys 'cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM='
+	sudo nix-store --gc
+
 tb14offline:
 	sudo nixos-rebuild --rollback switch --flake '.#thinkbook14' --offline
 	#sudo nixos-rebuild switch --flake '.#thinkbook14' --offline

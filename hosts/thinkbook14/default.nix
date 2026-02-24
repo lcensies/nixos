@@ -3,6 +3,7 @@
   imports = [
     ../../nixos/default.nix
     inputs.disko.nixosModules.disko
+    inputs.determinate.nixosModules.default
     ./hardware-configuration-thinkbook14.nix
     ./hardware-optimizations.nix
     ../../nixos/gnome.nix

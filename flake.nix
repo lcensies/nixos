@@ -21,6 +21,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
 
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
+
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.6.0";
 
     llm-agents = {
@@ -128,6 +130,7 @@
           pkgs = nixpkgs.legacyPackages.x86_64-linux.extend inputs.nur.overlays.default;
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
+            inputs.determinate.homeManagerModules.default
             ./nixos/home-manager/home.nix
             ./nixos/home-manager/config/ml.nix
           ];
