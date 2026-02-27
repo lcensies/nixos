@@ -37,8 +37,7 @@
     # gsettings-desktop-schemas
     # Pomodoro timer
     gnome-pomodoro
-    # Tiling window manager
-    # gnomeExtensions.forge  # Commented out - replaced with Pop Shell
+    # Tiling: also in programs.gnome-shell for HM; systemPackages ensures available at boot
     gnomeExtensions.pop-shell
     gnomeExtensions.search-light
     # wtype removed: Pop Shell handles hjkl keybindings natively via dconf
@@ -163,8 +162,9 @@
     # XDG_CURRENT_DESKTOP = "GNOME";
     # XDG_SESSION_DESKTOP = "gnome";
     # XDG_SESSION_TYPE = "wayland";
-    # Fix for missing FileChooser interface - set XDG_DESKTOP_PORTAL_DIR explicitly
-    XDG_DESKTOP_PORTAL_DIR = "/run/current-system/sw/share/xdg-desktop-portal/portals";
+    # DISABLED: Forcing XDG_DESKTOP_PORTAL_DIR can break GNOME Shell extension loading
+    # and portal discovery. Use default portal discovery instead.
+    # XDG_DESKTOP_PORTAL_DIR = "/run/current-system/sw/share/xdg-desktop-portal/portals";
     # IBus environment variables
     # GTK_IM_MODULE = "ibus";
     # QT_IM_MODULE = "ibus";

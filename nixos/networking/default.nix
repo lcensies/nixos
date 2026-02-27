@@ -3,7 +3,7 @@
   # Import sing-box configuration
   imports = [
     ./sing-box.nix
-    ./mullvad.nix
+    # ./mullvad.nix  # Disabled - not needed on host
     ./resolved-vpn.nix
     ./amnezia.nix
   ];
@@ -54,10 +54,12 @@
   # Also might be required to use with sing-box
   services.resolved.enable = true;
 
-  # systemd-resolved loses DNS state after hibernation/suspend; restart it on resume.
-  powerManagement.resumeCommands = ''
-    systemctl restart systemd-resolved.service
-  '';
+  # DISABLED: Restarting systemd-resolved on resume breaks DNS when VPN is connected.
+  # The VPN client (Mullvad/Amnezia) registers DNS with resolved; a restart clears that
+  # and can leave DNS broken until VPN reconnects.
+  # powerManagement.resumeCommands = ''
+  #   systemctl restart systemd-resolved.service
+  # '';
   # programs.nekoray.tunMode.enable = true;
 
 
