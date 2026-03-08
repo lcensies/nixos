@@ -163,16 +163,12 @@ in
   #  enableSSHSupport = true;
   #};
 
-  # Nix configuration with flakes support (Determinate Nix via determinate.nixosModules.default)
   nix = {
     gc.automatic = true;
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
       auto-optimise-store = true;
       trusted-users = [ "root" "esc2" ];
-      # Determinate Nix / FlakeHub cache (for fetching Determinate Nix and closures)
-      extra-substituters = [ "https://install.determinate.systems" "https://cache.flakehub.com" ];
-      extra-trusted-public-keys = [ "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=" ];
     };
   };
 

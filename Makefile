@@ -1,36 +1,44 @@
 
+# ── Host auto-detection (DMI product_version) ──────────────────────────────
+# Override with: make switch FLAKE_HOST=thinkbook14
+_DMI_VER  := $(shell cat /sys/class/dmi/id/product_version 2>/dev/null)
+_DMI_NAME := $(shell cat /sys/class/dmi/id/product_name    2>/dev/null)
 
-vmware-vm:
-	sudo nixos-rebuild switch --arg machineType '"vmware-vm"'
+ifeq ($(_DMI_VER),ThinkPad P16s Gen 4 AMD)
+  FLAKE_HOST ?= p16s
+  DISKO_DISK ?= /dev/nvme0n1
+else ifeq ($(_DMI_VER),ThinkBook 14 G6+ IMH)
+  FLAKE_HOST ?= thinkbook14
+  DISKO_DISK ?= /dev/nvme0n1
+else ifeq ($(_DMI_NAME),VMware Virtual Platform)
+  FLAKE_HOST ?= vmware-vm
+  DISKO_DISK ?= /dev/sda
+else
+  FLAKE_HOST ?= $(error Unknown machine (DMI product_version='$(_DMI_VER)'). Set FLAKE_HOST= manually.)
+  DISKO_DISK ?= /dev/nvme0n1
+endif
 
-disko-vmware-vm:
-	sudo nix --extra-experimental-features flakes --extra-experimental-features nix-command  run 'github:nix-community/disko/latest#disko-install' -- --flake '.#vmware-vm' --disk main /dev/sda
+_DISKO_RUN = sudo nix --extra-experimental-features flakes \
+               --extra-experimental-features nix-command \
+               run 'github:nix-community/disko/latest#disko-install' -- \
+               --flake '.#$(FLAKE_HOST)' --disk main $(DISKO_DISK)
 
-tb14:
-	sudo nixos-rebuild switch --flake '.#thinkbook14'
+# ── Main targets ────────────────────────────────────────────────────────────
+
+switch:
+	sudo nixos-rebuild switch --flake '.#$(FLAKE_HOST)'
 	sudo nix-store --gc
 
-# First-time switch to Determinate Nix: use this once so current (upstream) Nix can fetch Determinate from cache. After that use `make tb14`.
-tb14-determinate-first:
-	sudo nixos-rebuild switch --flake '.#thinkbook14' \
-	  --option extra-substituters 'https://install.determinate.systems https://cache.flakehub.com' \
-	  --option extra-trusted-public-keys 'cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM='
-	sudo nix-store --gc
+offline:
+	sudo nixos-rebuild --rollback switch --flake '.#$(FLAKE_HOST)' --offline
 
-tb14offline:
-	sudo nixos-rebuild --rollback switch --flake '.#thinkbook14' --offline
-	#sudo nixos-rebuild switch --flake '.#thinkbook14' --offline
-
-disko-tb14:
-	sudo nix --extra-experimental-features flakes --extra-experimental-features nix-command run 'github:nix-community/disko/latest#disko-install' -- --flake '.#thinkbook14' --disk main /dev/nvme0n1
+disko-install:
+	$(_DISKO_RUN)
 
 rollback:
 	sudo nixos-rebuild switch --flake '.#rollback'
 
-configure:
-	git submodule update --init --recursive
-	[ -d ~/.dotfiles ] || ln -sv "$(shell pwd)/dotfiles" ${HOME}/.dotfiles
-	rcup -v
+# ── Home Manager ────────────────────────────────────────────────────────────
 
 home-manager:
 	home-manager switch --flake '.#esc2' --impure
@@ -38,7 +46,15 @@ home-manager:
 home-manager-edit:
 	home-manager edit --flake '.#esc2'
 
-# Cleanup targets
+# ── Setup ───────────────────────────────────────────────────────────────────
+
+configure:
+	git submodule update --init --recursive
+	[ -d ~/.dotfiles ] || ln -sv "$(shell pwd)/dotfiles" ${HOME}/.dotfiles
+	rcup -v
+
+# ── Cleanup ─────────────────────────────────────────────────────────────────
+
 clean:
 	@echo "Cleaning Nix store garbage..."
 	sudo nix-collect-garbage -d
@@ -47,6 +63,5 @@ clean:
 	rm -r ~/.cache
 	@echo "Garbage collection complete."
 
-
-.PHONY: clean clean-boot clean-all
-
+.PHONY: switch offline disko-install rollback \
+        home-manager home-manager-edit configure clean

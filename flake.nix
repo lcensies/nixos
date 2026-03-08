@@ -21,8 +21,6 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
 
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
-
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.6.0";
 
     llm-agents = {
@@ -114,6 +112,19 @@
             ];
           };
 
+          # ./hosts/p16s — Lenovo ThinkPad P16s Gen 4 AMD (21QR0020US)
+          p16s = nixpkgs.lib.nixosSystem {
+            inherit specialArgs;
+            system = "x86_64-linux";
+            modules = [
+              inputs.nix-flatpak.nixosModules.nix-flatpak
+              inputs.preload-ng.nixosModules.default
+              ./hosts/p16s
+              ./nixos/home-manager
+              ({ inputs, ... }: { nixpkgs.overlays = [ inputs.nur.overlays.default ]; })
+            ];
+          };
+
           # Rollback to original configuration
           rollback = nixpkgs.lib.nixosSystem {
             inherit specialArgs;
@@ -130,7 +141,6 @@
           pkgs = nixpkgs.legacyPackages.x86_64-linux.extend inputs.nur.overlays.default;
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
-            inputs.determinate.homeManagerModules.default
             ./nixos/home-manager/home.nix
             ./nixos/home-manager/config/ml.nix
           ];
