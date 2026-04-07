@@ -134,6 +134,19 @@
             ];
           };
 
+          # ./hosts/xeon-ws — Intel Xeon E5-2680 v3 workstation
+          xeon-ws = nixpkgs.lib.nixosSystem {
+            inherit specialArgs;
+            system = "x86_64-linux";
+            modules = [
+              inputs.nix-flatpak.nixosModules.nix-flatpak
+              inputs.preload-ng.nixosModules.default
+              ./hosts/xeon-ws
+              ./nixos/home-manager
+              ({ inputs, ... }: { nixpkgs.overlays = [ inputs.nur.overlays.default ]; })
+            ];
+          };
+
         };
 
       homeConfigurations = {

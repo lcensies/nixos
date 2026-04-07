@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   unstableTarball = fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
@@ -169,6 +169,7 @@ in
       experimental-features = [ "nix-command" "flakes" ];
       auto-optimise-store = true;
       trusted-users = [ "root" "esc2" ];
+      substituters = lib.mkForce [ "https://mirror.yandex.ru/nixos" ];
     };
   };
 

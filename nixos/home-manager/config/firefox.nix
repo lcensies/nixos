@@ -6,20 +6,6 @@
 }:
 let
   firefox-addons = pkgs.nur.repos.rycee.firefox-addons;
-  # Privacy Badger (EFF) - not in NUR generated set; addonId from manifest
-  privacy-badger = firefox-addons.buildFirefoxXpiAddon {
-    pname = "privacy-badger";
-    version = "2025.12.9";
-    addonId = "jid1-MnnxcxisBPnSXQ@jetpack";
-    url = "https://addons.mozilla.org/firefox/downloads/latest/privacy-badger17/latest-firefox.xpi";
-    sha256 = "18ff75s641ymjmh9jfg4lyvahvzb1p89mypy5fcnqwpdvkfancpl";
-    meta = with pkgs.lib; {
-      homepage = "https://privacybadger.org/";
-      description = "Privacy Badger automatically learns to block hidden trackers (EFF)";
-      license = licenses.gpl3Only;
-      platforms = platforms.all;
-    };
-  };
 in
 {
   programs.firefox = {
@@ -30,13 +16,7 @@ in
       name = "esc2";
 
       extensions.packages = with firefox-addons; [
-        # uBlock Origin - uBlock0@raymondhill.net
         ublock-origin
-
-        # Privacy Badger (EFF) - tracker blocking
-        privacy-badger
-
-        # Vimium - {d7742d87-e61d-4b78-b8a1-b469842139fa}
         vimium
       ];
 
@@ -104,7 +84,7 @@ in
                 ];
               }
             ];
-            icon = "''${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
             definedAliases = [ "@np" ];
           };
 
@@ -114,7 +94,7 @@ in
                 template = "https://nixos.wiki/index.php?search={searchTerms}";
               }
             ];
-            icon = "''${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
             definedAliases = [ "@nw" ];
           };
         };
