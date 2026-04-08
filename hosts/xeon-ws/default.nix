@@ -5,6 +5,7 @@
     inputs.disko.nixosModules.disko
     ./hardware-configuration.nix
     ../../nixos/gnome.nix
+    ./nvidia.nix
   ];
 
   # Legacy/BIOS mode — install GRUB to MBR of the NVMe disk
@@ -20,4 +21,7 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   security.sudo.wheelNeedsPassword = false;
+
+  # Swap to prevent OOM hard-hangs (32GB RAM, heavy CUDA builds)
+  swapDevices = [{ device = "/swapfile"; size = 16 * 1024; }];
 }
