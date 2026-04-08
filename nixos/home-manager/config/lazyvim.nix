@@ -1,13 +1,13 @@
-# LazyVim via lazyvim-nixvim flake (NixVim-based).
+# LazyVim via root flake `packages.nvim-lazyvim` (nix-community/nixvim).
 # Provides the nvim package; do not enable programs.neovim.
 {
   config,
   pkgs,
-  inputs,
+  outputs,
   ...
 }:
 {
   home.packages = [
-    inputs.lazyvim-nixvim.packages.${pkgs.system}.default
+    outputs.packages.${pkgs.system}.nvim-lazyvim
   ];
 }

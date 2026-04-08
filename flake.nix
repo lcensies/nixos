@@ -32,16 +32,13 @@
 
     preload-ng.url = "github:miguel-b-p/preload-ng";
 
-    # nixpkgs with neovim-unwrapped tree-sitter fix (so lazyvim-nix evaluates)
-    nixpkgs-neovim-fix = {
-      url = "path:./nixos/nixpkgs-neovim-fix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    # Local LazyVim config (nixos/vim/lazyvim-nix)
-    lazyvim-nixvim = {
-      url = "path:./nixos/vim/lazyvim-nix";
-      inputs.nixpkgs.follows = "nixpkgs-neovim-fix";
-    };
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
+
+    # LazyVim via nixvim; build uses `neovimOverlay` + makeNixvimWithModule { pkgs = ... } (not path subflakes)
+    nixvim.url = "github:nix-community/nixvim";
+    nixvim.inputs.nixpkgs.follows = "nixpkgs";
+    nixvim.inputs.flake-parts.follows = "flake-parts";
 
   };
 
@@ -73,10 +70,22 @@
           ) raw;
         };
       };
+
+      lazyvimNvimFor = system: let
+        pkgs = nixpkgs.legacyPackages.${system}.extend (neovimOverlay nixpkgs.outPath);
+        nixvim' = inputs.nixvim.legacyPackages.${system};
+        module = import ./nixos/vim/lazyvim-nixvim-config.nix { inherit pkgs; lib = pkgs.lib; };
+      in
+      nixvim'.makeNixvimWithModule { inherit pkgs module; };
     in
     {
       #packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
+
+      packages = forAllSystems (system: {
+        nvim-lazyvim = lazyvimNvimFor system;
+      });
+
       # Overlay to fix neovim-unwrapped tree-sitter grammar src/url mismatch in nixpkgs
       overlays = {
         neovim = neovimOverlay nixpkgs.outPath;

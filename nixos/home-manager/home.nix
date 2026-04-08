@@ -10,7 +10,7 @@
     ./config/bashrc.nix
     # ./config/alacritty.nix
     # ./config/neovim.nix  # replaced by LazyVim (lazyvim-nixvim)
-    # ./config/lazyvim.nix  # disabled: lazyvim-nix path removed
+    ./config/lazyvim.nix
     ./config/firefox.nix
     # ./config/yt-dlp.nix
 
