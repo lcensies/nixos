@@ -2,10 +2,15 @@
 {
   imports = [
     ../../nixos/default.nix
-    inputs.disko.nixosModules.disko
+    # No ./disko.nix: importing disko's module without disko.devices still interferes with swapDevices
+    # merge (nix-community/disko#678). Re-add inputs.disko.nixosModules.disko only for disko-install.
     ./hardware-configuration.nix
     ../../nixos/gnome.nix
+    ./gnome-power.nix
+    ./freeze-mitigations.nix
+    ./remote-session-stability.nix
     ./nvidia.nix
+    ./local-llm.nix
   ];
 
   # Legacy/BIOS mode — install GRUB to MBR of the NVMe disk
@@ -22,6 +27,17 @@
 
   security.sudo.wheelNeedsPassword = false;
 
-  # Swap to prevent OOM hard-hangs (32GB RAM, heavy CUDA builds)
-  swapDevices = [{ device = "/swapfile"; size = 16 * 1024; }];
+  # Swap + zram: Nix/CUDA builds spike RAM.
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 16 * 1024;
+    }
+  ];
+  zramSwap.enable = true;
+  zramSwap.memoryPercent = 25;
+
+  # `freeze-mitigations.nix`: Xorg + shallower C-states for whole-machine idle hangs (see that file).
+  # If freezes persist: try `boot.kernelPackages = pkgs.linuxPackages` instead of _latest; capture
+  # `journalctl -b -1` after a forced reset if you can.
 }

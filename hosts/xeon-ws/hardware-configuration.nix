@@ -26,7 +26,7 @@
       fsType = "ext4";
     };
 
-  swapDevices = [ ];
+  # swap declared in hosts/xeon-ws/default.nix (avoid empty swapDevices merge breaking swapfile submodule)
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

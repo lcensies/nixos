@@ -11,7 +11,6 @@
     # ./config/alacritty.nix
     # ./config/neovim.nix  # replaced by LazyVim (lazyvim-nixvim)
     ./config/lazyvim.nix
-    ./config/firefox.nix
     # ./config/yt-dlp.nix
 
 
@@ -32,11 +31,8 @@
     # vscodium
     code-cursor
     vscode
-    #Browser
-    firefox
+    # Browser: LibreWolf via system Flatpak (nixos/flatpak) — avoids heavy Nix onnxruntime builds
     tor-browser
-    # Second firefox
-    librewolf
     # For compatibility
     chromium
     # Just for fun

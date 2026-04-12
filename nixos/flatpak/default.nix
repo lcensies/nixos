@@ -23,6 +23,7 @@
   # # Format: { appId = "app.id"; origin = "remote-name"; }
   services.flatpak.packages = [
     #{ appId = "com.brave.Browser"; origin = "flathub"; }
+    { appId = "io.gitlab.librewolf-community"; origin = "flathub"; }
     { appId = "com.obsproject.Studio"; origin = "flathub"; }
     { appId = "us.zoom.Zoom";  origin = "flathub"; }
     # Lutris is used instead

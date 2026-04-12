@@ -38,6 +38,56 @@ disko-install:
 rollback:
 	sudo nixos-rebuild switch --flake '.#rollback'
 
+# ── Remote xeon-ws (build on this machine, activate over SSH) ────────────────
+# Override: make deploy-xeon-ws REMOTE_XEON=esc2@192.168.31.39
+REMOTE_XEON ?= esc2@192.168.31.39
+# Destination on the remote for rsync (used by on-host: cd ~/nixos-deploy && nixos-rebuild …).
+XEON_REMOTE_DIR ?= ~/nixos-deploy
+NIX ?= nix --extra-experimental-features 'nix-command flakes'
+XEON_MAX_JOBS ?= 1
+XEON_CORES ?= 2
+XEON_NIX_FLAGS = --max-jobs $(XEON_MAX_JOBS) --cores $(XEON_CORES) --option builders-use-substitutes true
+
+# Parsed from REMOTE_XEON for podman deploy (override DEPLOY_SSH_* only if needed).
+DEPLOY_SSH_USER ?= $(firstword $(subst @, ,$(REMOTE_XEON)))
+DEPLOY_SSH_HOST ?= $(lastword $(subst @, ,$(REMOTE_XEON)))
+
+# deploy-rs (flake `deploy.nodes.xeon-ws`, remoteBuild = false → build locally).
+# --skip-checks avoids `nix flake check` (would evaluate every flake output, e.g. broken vmw + heavy checks).
+# For cgroup limits on builders, use deploy-xeon-ws-podman (host nix-daemon ignores client cgroups).
+deploy-xeon-ws:
+	cd "$(CURDIR)" && $(NIX) run ".#deploy-rs" -- ".#xeon-ws" --skip-checks -- \
+	  --extra-experimental-features "nix-command flakes" $(XEON_NIX_FLAGS)
+
+# Podman: caps RAM/CPU for the whole build+deploy (see scripts/deploy-xeon-ws-podman.sh).
+# Override: make deploy-xeon-ws-podman REMOTE_XEON=esc2@HOST MEMORY=12g CPUS=3 XEON_MAX_JOBS=1 XEON_CORES=2
+MEMORY ?= 16g
+CPUS ?= 4
+
+deploy-xeon-ws-podman:
+	MEMORY="$(MEMORY)" CPUS="$(CPUS)" MAX_JOBS="$(XEON_MAX_JOBS)" BUILD_CORES="$(XEON_CORES)" DEPLOY_SSH_USER="$(DEPLOY_SSH_USER)" DEPLOY_SSH_HOST="$(DEPLOY_SSH_HOST)" \
+	  "$(CURDIR)/scripts/deploy-xeon-ws-podman.sh"
+
+# Same idea with nixos-rebuild: local build when --target-host is set and --build-host omitted
+nixos-remote-switch-xeon-ws:
+	cd "$(CURDIR)" && $(NIX) run nixpkgs#nixos-rebuild -- switch \
+	  --flake ".#xeon-ws" \
+	  --target-host "$(REMOTE_XEON)" \
+	  --use-remote-sudo \
+	  --option builders-use-substitutes true \
+	  --max-jobs $(XEON_MAX_JOBS) \
+	  --cores $(XEON_CORES)
+
+# Mirror this repo to the remote (then SSH and run nixos-rebuild there).
+# Excludes Nix result symlinks and direnv; --delete drops paths removed locally.
+# Untracked files (e.g. gitignored `.env`) are copied if present.
+# Override: make rsync-xeon-ws REMOTE_XEON=esc2@host XEON_REMOTE_DIR='~/nixos-deploy'
+rsync-xeon-ws:
+	rsync -avz --delete \
+	  --exclude 'result' --exclude 'result-*' \
+	  --exclude '.direnv' \
+	  "$(CURDIR)/" "$(REMOTE_XEON):$(XEON_REMOTE_DIR)/"
+
 # ── Home Manager ────────────────────────────────────────────────────────────
 
 home-manager:
@@ -64,4 +114,6 @@ clean:
 	@echo "Garbage collection complete."
 
 .PHONY: switch offline disko-install rollback \
+        deploy-xeon-ws deploy-xeon-ws-podman \
+        nixos-remote-switch-xeon-ws rsync-xeon-ws \
         home-manager home-manager-edit configure clean

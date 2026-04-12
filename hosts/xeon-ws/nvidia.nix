@@ -1,20 +1,22 @@
 { pkgs, config, ... }:
 {
-  # Binary caches for pre-built CUDA packages (avoids local compilation)
+  # CUDA caches: use extra-* so they persist in /etc/nix/nix.conf and append to defaults
+  # (cache.nixos.org + common substituters) instead of replacing the substituters list.
+  # cuda-maintainers tracks nixpkgs-unstable for prebuilt CUDA.
   nix.settings = {
-    substituters = [
-      "https://cache.nixos.org"
+    extra-substituters = [
       "https://cuda-maintainers.cachix.org"
       "https://nix-community.cachix.org"
     ];
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    extra-trusted-public-keys = [
       "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCUSjDg="
     ];
-    # Limit parallelism to avoid OOM during heavy CUDA/OpenCV compilation (32GB RAM, no swap)
-    max-jobs = 2;
-    cores = 4;
+    # Prefer fetching on the machine that is doing the build instead of falling back to local compilation.
+    builders-use-substitutes = true;
+    # RTX/CUDA builds are RAM-heavy on this host; keep them effectively serial and cap parallelism hard.
+    max-jobs = 1;
+    cores = 2;
   };
 
   # Proprietary NVIDIA drivers with CUDA support for RTX 5090
@@ -42,7 +44,6 @@
     cudaPackages.cuda_cudart
     cudaPackages.cudatoolkit
     nvtopPackages.nvidia
-    vllm
   ];
 
   # Make CUDA libraries available system-wide
