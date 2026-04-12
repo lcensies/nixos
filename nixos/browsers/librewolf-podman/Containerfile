@@ -1,5 +1,11 @@
 # LibreWolf from official Debian repo (avoids Nix firefox/onnx closure and Flathub pulls).
 # Runtime uses host Wayland + PipeWire + session D-Bus via podman mounts (see librewolf-podman.nix).
+#
+# Not based on linuxserver/docker-librewolf: that image uses ghcr.io/linuxserver/baseimage-selkies
+# (streaming desktop in a browser, EXPOSE 3001, VOLUME /config, TITLE/PIXELFLUX_WAYLAND, COPY root/
+# for Openbox/Labwc). We run the real binary on the host compositor via podman, so Selkies/VNC bits
+# do not apply. They install from repo.librewolf.net pool .debs; we use deb.librewolf.net APT for
+# bookworm — same upstream, different packaging path.
 FROM docker.io/library/debian:bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive \

@@ -1,5 +1,42 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
+let
+  # nvidia-container-toolkit CDI generator can run before the kernel module is ready (NVML:
+  # "Driver Not Loaded"), which fails nixos-rebuild switch — see NixOS/nixpkgs#451912.
+  nvidiaCdiWaitNvml = pkgs.writeShellScript "nvidia-cdi-wait-nvml" ''
+    set -euo pipefail
+    NVSMI="${lib.getExe' config.hardware.nvidia.package "nvidia-smi"}"
+    for _ in $(seq 1 120); do
+      if "$NVSMI" -L &>/dev/null; then
+        exit 0
+      fi
+      sleep 1
+    done
+    echo "nvidia-cdi-generator: nvidia-smi still failing after 120s (driver not loaded?)" >&2
+    exit 1
+  '';
+in
 {
+  # If `nvidia-smi` fails and `lsmod` shows nouveau: you are likely booted into an OLD kernel
+  # while the nvidia package matches `boot.kernelPackages` (see `readlink /run/booted-system/kernel`
+  # vs `readlink /run/current-system/kernel`). Reboot so the running kernel matches the
+  # generation — otherwise CUDA/Ollama fall back to CPU.
+
+  # CPU governor: helps prefill/tokenization when the CPU is on the hot path.
+  powerManagement.cpuFreqGovernor = "performance";
+
+  # systemd PPD profile (GNOME also uses this; complements cpufreq governor).
+  systemd.services.xeon-ws-performance-profile = {
+    description = "Set power-profiles-daemon to performance (LLM / GPU workloads)";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "power-profiles-daemon.service" ];
+    wants = [ "power-profiles-daemon.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.power-profiles-daemon}/bin/powerprofilesctl set performance";
+    };
+  };
+
   # CUDA caches: use extra-* so they persist in /etc/nix/nix.conf and append to defaults
   # (cache.nixos.org + common substituters) instead of replacing the substituters list.
   # cuda-maintainers tracks nixpkgs-unstable for prebuilt CUDA.
@@ -27,6 +64,8 @@
     open = false; # Use proprietary driver
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
+    # Keeps GPU initialized (fewer first-touch / container init surprises).
+    nvidiaPersistenced = true;
   };
 
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -49,6 +88,15 @@
   # Make CUDA libraries available system-wide
   environment.variables = {
     CUDA_PATH = "${pkgs.cudaPackages.cudatoolkit}";
+  };
+
+  # Only when local-llm (or another module) enables the toolkit.
+  systemd.services.nvidia-container-toolkit-cdi-generator = lib.mkIf config.hardware.nvidia-container-toolkit.enable {
+    serviceConfig = {
+      ExecStartPre = [ "${nvidiaCdiWaitNvml}" ];
+      Restart = "on-failure";
+      RestartSec = "15s";
+    };
   };
 
 }

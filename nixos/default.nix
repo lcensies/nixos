@@ -1,7 +1,5 @@
 { inputs, ... }:
 {
-  services.openclawGateway.enable = true;
-
   imports = [
     ./common
     ./audio

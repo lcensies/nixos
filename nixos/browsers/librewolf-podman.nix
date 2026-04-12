@@ -85,6 +85,8 @@ let
     exec ${pkgs.podman}/bin/podman run "''${RUN_ARGS[@]}" "$IMAGE" "$@"
   '';
 
+  # Installs share/applications/librewolf-podman.desktop into the system profile
+  # (GNOME/KDE pick it up via default XDG_DATA_DIRS on NixOS).
   desktop = pkgs.makeDesktopItem {
     name = "librewolf-podman";
     desktopName = "LibreWolf";
@@ -93,6 +95,16 @@ let
     icon = "librewolf";
     exec = "librewolf %u";
     terminal = false;
+    startupNotify = true;
+    startupWMClass = "LibreWolf";
+    keywords = [
+      "browser"
+      "web"
+      "internet"
+      "librewolf"
+      "firefox"
+      "podman"
+    ];
     categories = [ "Network" "WebBrowser" ];
     mimeTypes = [
       "text/html"
