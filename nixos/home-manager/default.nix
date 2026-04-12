@@ -2,6 +2,7 @@
   config,
   pkgs,
   inputs,
+  outputs,
   ...
 }:
 {
@@ -12,7 +13,7 @@
   # Back up existing files (e.g. ~/.mozilla/firefox/profiles.ini) instead of failing activation
   home-manager.backupFileExtension = "backup";
 
-  home-manager.extraSpecialArgs = { inherit inputs; };
+  home-manager.extraSpecialArgs = { inherit inputs outputs; };
 
   home-manager.users.esc2 =
     { config, pkgs, ... }:

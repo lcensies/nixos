@@ -169,7 +169,20 @@ in
       experimental-features = [ "nix-command" "flakes" ];
       auto-optimise-store = true;
       trusted-users = [ "root" "esc2" ];
-      substituters = lib.mkForce [ "https://mirror.yandex.ru/nixos" ];
+      # Avoid lib.mkForce here: it hides extra-substituters from host modules (e.g. cuda-maintainers on xeon-ws).
+      # cache.nixos.org is already included by the NixOS module defaults; listing it again would duplicate.
+      substituters = [
+        "https://mirror.yandex.ru/nixos"
+      ];
+
+      # Parallel binary cache I/O (works with cache.nixos.org, mirrors, Cachix, etc.).
+      # This is standard upstream Nix — not the Determinate/FlakeHub installer substituters.
+      # Determinate Nix bundles similar tunables plus a separate fork; its published NixOS path pulls
+      # FlakeHub-pinned sources and documents https://install.determinate.systems as a cache — skipped here
+      # to avoid vendor-tied substituters while still saturating links to *your* chosen caches.
+      # See Nix manual “nix.conf”: https://nixos.org/manual/nix/stable/command-ref/conf-file.html
+      http-connections = 64;
+      max-substitution-jobs = 32;
     };
   };
 

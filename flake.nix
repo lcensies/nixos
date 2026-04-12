@@ -35,6 +35,13 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
 
+    deploy-rs.url = "github:serokell/deploy-rs";
+    deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
+
+    # `import ./.` / legacy nix-build (deploy-rs when flake detection fails); non-flake input
+    flake-compat.url = "github:edolstra/flake-compat";
+    flake-compat.flake = false;
+
     # LazyVim via nixvim; build uses `neovimOverlay` + makeNixvimWithModule { pkgs = ... } (not path subflakes)
     nixvim.url = "github:nix-community/nixvim";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
@@ -48,6 +55,7 @@
       nixpkgs,
       impermanence,
       home-manager,
+      deploy-rs,
       ...
     }:
     let
@@ -157,6 +165,28 @@
           };
 
         };
+
+      # https://github.com/serokell/deploy-rs — build on the machine running `deploy` (see remoteBuild).
+      deploy.nodes.xeon-ws = {
+        hostname = "192.168.31.3";
+        sshUser = "esc2";
+        remoteBuild = false;
+        profiles.system = {
+          user = "root";
+          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.xeon-ws;
+        };
+      };
+
+      checks = builtins.mapAttrs (
+        system: deployLib: deployLib.deployChecks self.deploy
+      ) deploy-rs.lib;
+
+      apps = forAllSystems (system: {
+        deploy-rs = {
+          type = "app";
+          program = "${inputs.deploy-rs.packages.${system}.default}/bin/deploy";
+        };
+      });
 
       homeConfigurations = {
         "esc2" = home-manager.lib.homeManagerConfiguration {
