@@ -47,6 +47,12 @@
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.inputs.flake-parts.follows = "flake-parts";
 
+    # Plain rcm tree (see rcm(7)); symlinked to ~/.dotfiles + rcup on HM activation
+    dotfiles = {
+      url = "github:lcensies/dotfiles";
+      flake = false;
+    };
+
   };
 
   outputs =
@@ -195,6 +201,7 @@
           modules = [
             ./nixos/home-manager/home.nix
             ./nixos/home-manager/config/ml.nix
+            ./nixos/home-manager/config/dotfiles.nix
           ];
         };
       };

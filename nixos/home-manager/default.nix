@@ -21,6 +21,7 @@
       imports = [
         (import ./home.nix { inherit config pkgs inputs; })
         ./config/ml.nix
+        ./config/dotfiles.nix
       ];
     };
 }

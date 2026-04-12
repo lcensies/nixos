@@ -150,6 +150,22 @@
         "type": "github"
       }
     },
+    "dotfiles": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767361625,
+        "narHash": "sha256-26NkjMP6It6j8qulUgZEHatAuMyzJn7QzVaXjSK68Fs=",
+        "owner": "lcensies",
+        "repo": "dotfiles",
+        "rev": "0620ca4981414168911d20c1df1456c8842a6621",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lcensies",
+        "repo": "dotfiles",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -689,6 +705,7 @@
         "chaotic": "chaotic",
         "deploy-rs": "deploy-rs",
         "disko": "disko",
+        "dotfiles": "dotfiles",
         "flake-compat": "flake-compat_2",
         "flake-parts": "flake-parts",
         "handy": "handy",
