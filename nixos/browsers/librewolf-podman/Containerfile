@@ -1,0 +1,22 @@
+# LibreWolf from official Debian repo (avoids Nix firefox/onnx closure and Flathub pulls).
+# Runtime uses host Wayland + PipeWire + session D-Bus via podman mounts (see librewolf-podman.nix).
+FROM docker.io/library/debian:bookworm-slim
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    MOZ_ENABLE_WAYLAND=1
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+       ca-certificates curl gnupg \
+  && install -d /usr/share/keyrings \
+  && curl -fsSL https://deb.librewolf.net/key.gpg \
+     | gpg --dearmor -o /usr/share/keyrings/librewolf.gpg \
+  && printf '%s\n' \
+       'deb [signed-by=/usr/share/keyrings/librewolf.gpg] https://deb.librewolf.net/librewolf bookworm main' \
+       > /etc/apt/sources.list.d/librewolf.list \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends librewolf \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT ["/usr/bin/librewolf"]

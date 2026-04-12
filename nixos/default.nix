@@ -10,6 +10,7 @@
     ./silent-boot
     ./gaming
     ./flatpak
+    ./browsers/librewolf-podman.nix
     ./development
     ./backups
     ./optimization
